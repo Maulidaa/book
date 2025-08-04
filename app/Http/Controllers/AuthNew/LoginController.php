@@ -4,31 +4,39 @@ namespace App\Http\Controllers\AuthNew;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LoginController extends Controller
 {
     public function login(Request $request)
     {
-        // Validate the request
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+        //set validation
+        $validator = Validator::make($request->all(), [
+            'email'     => 'required',
+            'password'  => 'required'
         ]);
 
-        // Attempt to log the user in
-        if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Redirect to intended page or home
-            return redirect()->intended('home');
+        //if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
         }
 
-        $user = auth()->user();
+        //get credentials from request
+        $credentials = $request->only('email', 'password');
 
-        // If login fails, redirect back with an error message
-        //return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
+        //if auth failed
+        if(!$token = auth()->guard('api')->attempt($credentials)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau Password Anda salah'
+            ], 401);
+        }
+
+        //if auth success
         return response()->json([
-            'user' => $user,
-            'message' => 'Invalid credentials',
-            'status' => 'error',
-        ], 401);
+            'success' => true,
+            'user'    => auth()->guard('api')->user(),    
+            'token'   => $token   
+        ], 200);
     }
 }
