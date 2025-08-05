@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthNew\RegisterController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\CategorieController;
+use App\Http\Controllers\Book\ChepterController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,4 +38,12 @@ Route::prefix('categories')->group(function () {
     Route::get('/{id}', [CategorieController::class, 'show']); // Show category detail
     Route::put('/{id}', [CategorieController::class, 'update']); // Update category
     Route::delete('/{id}', [CategorieController::class, 'destroy']); // Delete category
+});
+
+Route::prefix('chapters')->group(function () {
+    Route::get('/', [ChepterController::class, 'index']); // List chapters
+    Route::post('/', [ChepterController::class, 'store']); // Create chapter
+    Route::get('/{id}', [ChepterController::class, 'show']); // Show chapter detail
+    Route::put('/{id}', [ChepterController::class, 'update']); // Update chapter
+    Route::delete('/{id}', [ChepterController::class, 'destroy']); // Delete chapter
 });
