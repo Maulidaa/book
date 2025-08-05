@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Book;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Book;
+use App\Exports\BookExport;
+use Maatwebsite\Excel\Facades\Excel;
+use App\User;
 
 class BookController extends Controller
 {
@@ -17,9 +20,13 @@ class BookController extends Controller
     {
         try {
             // Ambil relasi jika perlu
+            $author = User::where('role_id', 2)->count();
+            $publisher = User::where('role_id', 3)->count();
+            $book = Book::count();
+            // Ambil data buku beserta relasi category dan chapters
             $books = Book::with(['category', 'chapters'])->limit(10)->get();
 
-            return response()->json($books);
+            return view('book.list_book', compact('author', 'publisher', 'book', 'books'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load books'], 500);
         }
@@ -91,15 +98,8 @@ class BookController extends Controller
         // Logic to display a specific book by ID
     }
 
-    public function download_excel($id)
+    public function download_excel()
     {
-        // Logic to download to Excel
-        try {
-            $book = Book::findOrFail($id)->load(['category', 'chapters']);
-            // Logic to generate Excel file
-            return response()->json(['message' => 'Excel file generated successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to download Excel file'], 500);
-        }
+        return Excel::download(new BookExport, 'books.xlsx');
     }
 }

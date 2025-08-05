@@ -61,4 +61,10 @@ class RegisterController extends Controller
 
         return response()->json(['message' => 'Email berhasil diverifikasi']);
     }
+
+    public function index()
+    {
+        // Logic to show the registration form
+        return view('auth.register');
+    }
 }

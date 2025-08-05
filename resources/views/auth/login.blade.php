@@ -22,7 +22,7 @@
         <div class="card w-100" style="max-width: 400px;">
             <div class="card-body">
                 <div class="text-center mb-3">
-                    <i class="icon-user-lock icon-2x text-primary"></i>
+                    <i class="icon-user-lock icon-2x text-dark"></i>
                     <h5 class="mb-0 mt-2">Login to your account</h5>
                 </div>
                 @if(session('error'))
@@ -38,7 +38,7 @@
                         <label>Password:</label>
                         <input type="password" name="password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                    <button type="submit" class="btn bg-indigo-300 btn-block">Login</button>
                 </form>
                 <div class="text-center mt-3">
                     <a href="{{ route('register') }}">Belum punya akun? Daftar</a>

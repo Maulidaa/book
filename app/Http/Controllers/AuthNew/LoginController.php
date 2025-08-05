@@ -10,49 +10,41 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+    /**
+     * Handle the incoming request to login a user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        //set validation
-        $validator = Validator::make($request->all(), [
-            'email'     => 'required',
+        // Validasi input
+        $request->validate([
+            'email'     => 'required|email',
             'password'  => 'required'
         ]);
 
-        //if validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $user = User::where('email', $request->email)->first();
+        $user = \App\User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email atau Password Anda salah'
-            ], 401);
+            return redirect()->back()->with('error', 'Email atau Password Anda salah');
         }
 
         // Cek email sudah diverifikasi
         if (is_null($user->email_verified_at)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Silakan verifikasi email Anda terlebih dahulu.'
-            ], 403);
+            return redirect()->back()->with('error', 'Silakan verifikasi email Anda terlebih dahulu.');
         }
 
-        // Jika sudah diverifikasi, login dan generate token
-        if (!$token = auth()->guard('api')->attempt($request->only('email', 'password'))) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email atau Password Anda salah'
-            ], 401);
-        }
+        // Login user (session based)
+        auth()->login($user);
 
-        //if auth success
-        return response()->json([
-            'success' => true,
-            'user'    => $user,    
-            'token'   => $token   
-        ], 200);
+        // Redirect ke dashboard/index
+        return redirect()->route('dashboard');
+    }
+
+    public function index()
+    {
+        // Logic to show the login form
+        return view('auth.login');
     }
 }
