@@ -8,6 +8,8 @@ use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\CategorieController;
 use App\Http\Controllers\Book\ChepterController;
 use App\Http\Controllers\AuthNew\ProfileController;
+use App\Http\Controllers\Dashboard\StatistikController;
+use App\Http\Controllers\Dashboard\DashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -49,4 +51,9 @@ Route::prefix('chapters')->group(function () {
     Route::get('/{id}', [ChepterController::class, 'show']); // Show chapter detail
     Route::put('/{id}', [ChepterController::class, 'update']); // Update chapter
     Route::delete('/{id}', [ChepterController::class, 'destroy']); // Delete chapter
+});
+
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index']);
+    Route::get('statistics', [StatistikController::class, 'index']);
 });
