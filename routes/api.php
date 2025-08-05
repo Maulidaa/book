@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\Book\CategorieController;
 use App\Http\Controllers\Book\ChepterController;
+use App\Http\Controllers\AuthNew\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,8 @@ Route::prefix('auth')->group(function () {
     Route::post('login', [LoginController::class, 'login']);
     Route::post('register', [RegisterController::class, 'register']);
     Route::get('verification', [RegisterController::class, 'verification']);
+    Route::middleware('auth:api')->get('profile', [ProfileController::class, 'show']);
+    Route::middleware('auth:api')->put('profile', [ProfileController::class, 'update']);
 });
 
 Route::prefix('books')->group(function () {
