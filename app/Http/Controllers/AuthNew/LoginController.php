@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\AuthNew;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
@@ -21,11 +23,25 @@ class LoginController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        //get credentials from request
-        $credentials = $request->only('email', 'password');
+        $user = User::where('email', $request->email)->first();
 
-        //if auth failed
-        if(!$token = auth()->guard('api')->attempt($credentials)) {
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau Password Anda salah'
+            ], 401);
+        }
+
+        // Cek email sudah diverifikasi
+        if (is_null($user->email_verified_at)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Silakan verifikasi email Anda terlebih dahulu.'
+            ], 403);
+        }
+
+        // Jika sudah diverifikasi, login dan generate token
+        if (!$token = auth()->guard('api')->attempt($request->only('email', 'password'))) {
             return response()->json([
                 'success' => false,
                 'message' => 'Email atau Password Anda salah'
@@ -35,7 +51,7 @@ class LoginController extends Controller
         //if auth success
         return response()->json([
             'success' => true,
-            'user'    => auth()->guard('api')->user(),    
+            'user'    => $user,    
             'token'   => $token   
         ], 200);
     }
