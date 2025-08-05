@@ -19,6 +19,13 @@ class DashboardController extends Controller
         $author = User::where('role_id', 2)->count();
         $publisher = User::where('role_id', 3)->count();
         $book = Book::count();
-        return view('full.index', compact('author', 'publisher', 'book'));
+        // Ambil data buku beserta relasi category dan chapters
+        $books = Book::with(['category', 'chapters'])->limit(10)->get();
+
+        return view('full.index', compact('author', 'publisher', 'book', 'books'));
+    }
+
+    public function book()
+    {
     }
 }

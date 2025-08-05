@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Book;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Book; 
+use App\Book;
 
 class BookController extends Controller
 {
@@ -16,33 +16,10 @@ class BookController extends Controller
     public function index(Request $request)
     {
         try {
-            $draw = $request->get('draw');
-            $start = $request->get('start', 0);
-            $length = $request->get('length', 10);
-            $searchValue = $request->input('search.value');
+            // Ambil relasi jika perlu
+            $books = Book::with(['category', 'chapters'])->limit(10)->get();
 
-            $query = Book::query();
-
-            // Filter pencarian
-            if ($searchValue) {
-                $query->where(function($q) use ($searchValue) {
-                    $q->where('title', 'like', "%{$searchValue}%")
-                      ->orWhere('author', 'like', "%{$searchValue}%")
-                      ->orWhere('isbn', 'like', "%{$searchValue}%");
-                });
-            }
-
-            $recordsTotal = Book::count();
-            $recordsFiltered = $query->count();
-
-            $books = $query->offset($start)->limit($length)->get();
-
-            return response()->json([
-                'draw' => intval($draw),
-                'recordsTotal' => $recordsTotal,
-                'recordsFiltered' => $recordsFiltered,
-                'data' => $books,
-            ]);
+            return response()->json($books);
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load books'], 500);
         }
@@ -72,12 +49,20 @@ class BookController extends Controller
                 'title' => 'required|string|max:255',
                 'author' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'category_id' => 'nullable|exists:categories,id',
             ]);
+
+            // Handle file upload if cover image is provided
+            if ($request->hasFile('cover')) {
+                $coverPath = $request->file('cover')->store('covers', 'public');
+                $validatedData['url_cover'] = $coverPath;
+            }
 
             // Create a new book instance
             $book = Book::create([
                 'title' => $validatedData['title'],
+                'url_cover' => $validatedData['url_cover'],
                 'author' => $validatedData['author'],
                 'description' => $validatedData['description'],
                 'category_id' => $validatedData['category_id'],
@@ -106,4 +91,15 @@ class BookController extends Controller
         // Logic to display a specific book by ID
     }
 
+    public function download_excel($id)
+    {
+        // Logic to download to Excel
+        try {
+            $book = Book::findOrFail($id)->load(['category', 'chapters']);
+            // Logic to generate Excel file
+            return response()->json(['message' => 'Excel file generated successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to download Excel file'], 500);
+        }
+    }
 }
