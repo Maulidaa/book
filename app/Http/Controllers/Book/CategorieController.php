@@ -11,12 +11,9 @@ class CategorieController extends Controller
 {
     public function index()
     {
-        // Logic to list paginated categories
+        // pegination page
         $categories = Category::paginate(10);
-        $page = request()->get('page', 1);
-        $categories->setPath(route('categories.index', ['page' => $page])); 
         return response()->json($categories);
-        
     }
 
     public function show($id)
@@ -42,6 +39,8 @@ class CategorieController extends Controller
         $category = Category::create([
             'name' => $request->name,
         ]);
+
+        return response()->json($category, 201);
     }
 
     public function update(Request $request, $id)

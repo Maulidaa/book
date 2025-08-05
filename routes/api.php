@@ -25,15 +25,16 @@ Route::prefix('auth')->group(function () {
 });
 
 Route::prefix('books')->group(function () {
-    Route::get('/', [BookController::class, 'index']);      // List books (server-side datatable)
+    Route::get('/', [BookController::class, 'index']);      // List books
     Route::post('/', [BookController::class, 'store']);     // Create book
     Route::get('/{id}', [BookController::class, 'show']);   // Show detail book
+});
 
-    Route::prefix('categories')->group(function () {
-        Route::get('/', [CategorieController::class, 'index']); // List categories
-        Route::post('/', [CategorieController::class, 'store']); // Create category
-        Route::get('/{id}', [CategorieController::class, 'show']); // Show category detail
-        Route::put('/{id}', [CategorieController::class, 'update']); // Update category
-        Route::delete('/{id}', [CategorieController::class, 'destroy']); // Delete category
-    });
+// Perbaiki: kategori jadi endpoint utama, tidak di-nest
+Route::prefix('categories')->group(function () {
+    Route::get('/', [CategorieController::class, 'index']); // List categories
+    Route::post('/', [CategorieController::class, 'store']); // Create category
+    Route::get('/{id}', [CategorieController::class, 'show']); // Show category detail
+    Route::put('/{id}', [CategorieController::class, 'update']); // Update category
+    Route::delete('/{id}', [CategorieController::class, 'destroy']); // Delete category
 });

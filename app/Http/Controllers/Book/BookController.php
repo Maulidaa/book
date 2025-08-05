@@ -72,6 +72,7 @@ class BookController extends Controller
                 'title' => 'required|string|max:255',
                 'author' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'category_id' => 'nullable|exists:categories,id',
             ]);
 
             // Create a new book instance
@@ -79,7 +80,7 @@ class BookController extends Controller
                 'title' => $validatedData['title'],
                 'author' => $validatedData['author'],
                 'description' => $validatedData['description'],
-                'published_date' => $request->input('published_date'),
+                'category_id' => $validatedData['category_id'],
                 'isbn' => $request->input('isbn'),
             ]);
 
