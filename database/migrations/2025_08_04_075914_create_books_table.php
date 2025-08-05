@@ -20,6 +20,8 @@ class CreateBooksTable extends Migration
             $table->text('description')->nullable();
             $table->date('published_date')->nullable();
             $table->string('isbn')->unique()->nullable();
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('set null');
             $table->timestamps();
         });
     }
