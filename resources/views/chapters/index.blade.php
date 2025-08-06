@@ -183,13 +183,13 @@
 											<td>
 												<div class="d-flex align-items-center">
 													<div class="mr-3">
-														<a href="#">
+														<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" @method('PUT')>
 															<img src="{{ $chapter->book && $chapter->chapter_cover ? asset('storage/' . $chapter->chapter_cover) : asset('storage/covers/book.jpg') }}"
 																 class="rounded-circle" width="32" height="32" alt="">
 														</a>
 													</div>
 													<div>
-														<a href="#" class="text-default font-weight-semibold">{{ $chapter->title }}</a>
+														<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}">{{ $chapter->title }}</a>
 														<div class="text-muted font-size-sm">
 															<span class="badge badge-mark border-blue mr-1"></span>
 															{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}

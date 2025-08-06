@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\User;
 use App\Book;
+use Yajra\DataTables\Facades\DataTables;
 
 class DashboardController extends Controller
 {
@@ -20,13 +21,17 @@ class DashboardController extends Controller
         $author = User::where('role_id', 2)->count();
         $publisher = User::where('role_id', 3)->count();
         $book = Book::count();
-        // Ambil data buku beserta relasi category dan chapters
-        $books = Book::with(['category', 'chapters', 'author'])->limit(10)->get();
-
-        return view('full.index', compact('author', 'publisher', 'book', 'books', 'user'));
+        // Jangan ambil $books di sini!
+        return view('full.index', compact('author', 'publisher', 'book', 'user'));
     }
 
-    public function book()
+    public function booksData(Request $request)
     {
+        $query = Book::with(['category', 'author'])->withCount('chapters');
+        return DataTables::of($query)
+            ->addColumn('action', function ($book) {
+                return view('book.partials.actions', compact('book'))->render();
+            })
+            ->make(true);
     }
 }

@@ -68,6 +68,22 @@ class BookController extends Controller
         }
     }
 
+    public function edit($id)
+    {
+        try {
+            $book = Book::findOrFail($id);
+            $categories = Category::all();
+            $user = auth()->user();
+            $authors = null;
+            if ($user->role_id == 1) {
+                $authors = User::where('role_id', 2)->pluck('name', 'id');
+            }
+            return view('book.edit', compact('book', 'categories', 'user', 'authors'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to load edit book form'], 500);
+        }
+    }
+
     /**
      * Store a newly created book in storage.
      *
@@ -123,11 +139,59 @@ class BookController extends Controller
      */
     public function show($id)
     {
-        // Logic to display a specific book by ID
+        $book = Book::with(['category', 'author', 'chapters'])->findOrFail($id);
+        return view('book.show', compact('book'));
     }
 
     public function download_excel()
     {
         return Excel::download(new BookExport, 'books.xlsx');
+    }
+
+    /**
+     * Update the specified book in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $book = Book::findOrFail($id);
+            $user = auth()->user();
+
+            $validatedData = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+                'category_id' => 'nullable|exists:categories,id',
+                'isbn' => 'nullable|string|max:255',
+                // author_id hanya required jika admin
+                'author_id' => $user->role_id == 1 ? 'required|exists:users,id' : '',
+            ]);
+
+            if ($request->hasFile('cover')) {
+                $coverPath = $request->file('cover')->store('covers', 'public');
+                $validatedData['url_cover'] = $coverPath;
+            }
+
+            // Set author_id sesuai role
+            $author_id = $user->role_id == 1 ? $request->input('author_id') : $user->id;
+
+            $book->update([
+                'title' => $validatedData['title'],
+                'url_cover' => $validatedData['url_cover'] ?? $book->url_cover,
+                'author_id' => $author_id,
+                'description' => $validatedData['description'],
+                'category_id' => $validatedData['category_id'],
+                'isbn' => $validatedData['isbn'],
+            ]);
+
+            return redirect()->route('dashboard', ['id' => $id])->with('success', 'Book updated successfully.');
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to update book'], 500);
+        }
     }
 }

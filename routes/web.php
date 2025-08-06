@@ -19,6 +19,7 @@ Route::prefix('auth')->group(function () {
 
 // Home redirect
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard/books-data', [DashboardController::class, 'booksData'])->name('dashboard.booksData');
 
 // Book routes
 Route::prefix('book')->group(function () {
@@ -28,8 +29,11 @@ Route::prefix('book')->group(function () {
 });
 Route::get('/books/export/excel', [BookController::class, 'download_excel'])->name('books.export.excel');
 Route::get('/books', [BookController::class, 'index'])->name('books.index');
+
 Route::get('/books/create', [BookController::class, 'create'])->name('books.create');
 Route::post('/books', [BookController::class, 'store'])->name('books.store');
+Route::get('/books/{id}', [BookController::class, 'show'])->name('books.show');
+Route::get('/books/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
 
 // Chapter routes
 Route::prefix('books/{id}/chapters')->group(function () {

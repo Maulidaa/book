@@ -43,6 +43,11 @@
 	<script src="../../../../global_assets/js/demo_charts/pages/dashboard/light/bullets.js"></script>
 	<!-- /theme JS files -->
 
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
+
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 </head>
 
 <body>
@@ -155,58 +160,53 @@
 								</div>
 							</div>
 
-							<div class="table-responsive">
-								<table class="table text-nowrap">
-									<thead>
-										<tr>
-											<th>Title</th>
-											<th>Author</th>
-											<th>ISBN</th>
-											<th>Chapter</th>
-											<th>Category</th>
-											<th class="text-center" style="width: 20px;"><i class="icon-arrow-down12"></i></th>
-										</tr>
-									</thead>
-									<tbody>
-										@foreach($books as $book)
-										<tr>
-											<td>
-												<div class="d-flex align-items-center">
-													<div class="mr-3">
-														<a href="#">
-															<img src="{{ $book->url_cover ? asset('storage/' . $book->url_cover) : asset('storage/covers/book.jpg') }}" class="rounded-circle" width="32" height="32" alt="">
-														</a>
-													</div>
-													<div>
-														<a href="#" class="text-default font-weight-semibold">{{ $book->title }}</a>
-														<div class="text-muted font-size-sm">
-															<span class="badge badge-mark border-blue mr-1"></span>
-															{{ $book->published_date ?? '-' }}
-														</div>
-													</div>
-												</div>
-											</td>
-											<td><span class="text-muted">{{ $book->author ? $book->author->name : '-' }}</span></td>
-											<td><span class="text-success-600">{{ $book->isbn }}</span></td>
-											<td><h6 class="font-weight-semibold mb-0">{{ $book->chapters ? $book->chapters->count() : 0 }}</h6></td>
-											<td><span class="badge bg-blue">{{ $book->category->name ?? '-' }}</span></td>
-											<td class="text-center">
-												<div class="list-icons">
-													<div class="dropdown">
-														<a href="#" class="list-icons-item dropdown-toggle caret-0" data-toggle="dropdown"><i class="icon-menu7"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a href="#" class="dropdown-item"><i class="icon-file-stats"></i> View</a>
-															<a href="#" class="dropdown-item"><i class="icon-file-text2"></i> Edit</a>
-															<a href="#" class="dropdown-item"><i class="icon-file-locked"></i> Delete</a>
-														</div>
-													</div>
-												</div>
-											</td>
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
+							<!-- Tabel -->
+							<div class="card p-3" style="overflow-x:auto;">
+							    <table id="books-table" class="table table-hover text-center w-100">
+							        <thead>
+							            <tr>
+							                <th>Cover</th>
+							                <th>Title</th>
+							                <th>Author</th>
+							                <th>ISBN</th>
+							                <th>Chapter</th>
+							                <th>Category</th>
+							                <th>Action</th>
+							            </tr>
+							        </thead>
+							    </table>
 							</div>
+
+							<!-- Script DataTables -->
+							<script>
+							$(function() {
+							    $('#books-table').DataTable({
+							        processing: true,
+							        serverSide: true,
+							        ajax: '{{ route("dashboard.booksData") }}',
+							        columns: [
+							            {
+							                data: 'url_cover',
+							                name: 'url_cover',
+							                orderable: false,
+							                searchable: false,
+							                render: function(data, type, row) {
+							                    if (data) {
+							                        return '<img src="/storage/' + data + '" style="max-width:60px;max-height:80px;object-fit:cover;">';
+							                    }
+							                    return '-';
+							                }
+							            },
+							            { data: 'title', name: 'title' },
+							            { data: 'author.name', name: 'author.name', defaultContent: '-' },
+							            { data: 'isbn', name: 'isbn' },
+							            { data: 'chapters_count', name: 'chapters_count', orderable: false, searchable: false, defaultContent: 0 },
+							            { data: 'category.name', name: 'category.name', defaultContent: '-' },
+							            { data: 'action', name: 'action', orderable: false, searchable: false }
+							        ]
+							    });
+							});
+							</script>
 						</div>
 						<!-- /marketing campaigns -->
 					</div>
@@ -250,6 +250,5 @@
 		</div>
 	</div>
 	<!-- /footer -->
-		
 </body>
 </html>
