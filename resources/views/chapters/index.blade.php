@@ -51,12 +51,10 @@
 	@include('main.navbar')
 	<!-- /main navbar -->
 
-
 	<!-- Page header -->
 	@include('main.header')
 	<!-- /page header -->
 		
-
 	<!-- Page content -->
 	<div class="page-content pt-0">
 
@@ -70,70 +68,6 @@
 			<!-- Content area -->
 			<div class="content">
 
-				<!-- Main charts -->
-				<div class="row">
-					<div class="col-xl-12">
-
-						<!-- Statistics -->
-						<div class="card">
-							<div class="card-header header-elements-inline">
-								<h6 class="card-title">Statistics</h6>
-								<div class="header-elements">
-									<div class="form-check form-check-right form-check-switchery form-check-switchery-sm">
-									</div>
-								</div>
-							</div>
-
-							<div class="card-body py-0">
-								<div class="row">
-									<div class="col-sm-4">
-										<div class="d-flex align-items-center justify-content-center mb-2">
-											<a href="#" class="btn bg-transparent border-teal text-teal rounded-round border-2 btn-icon mr-3">
-												<i class="icon-plus3"></i>
-											</a>
-											<div>
-												<div class="font-weight-semibold">Author</div>
-												<span class="text-muted" id="stat-author">{{ $author }}</span>
-											</div>
-										</div>
-										<div class="w-75 mx-auto mb-3" id="new-visitors"></div>
-									</div>
-
-									<div class="col-sm-4">
-										<div class="d-flex align-items-center justify-content-center mb-2">
-											<a href="#" class="btn bg-transparent border-warning-400 text-warning-400 rounded-round border-2 btn-icon mr-3">
-												<i class="icon-watch2"></i>
-											</a>
-											<div>
-												<div class="font-weight-semibold">Publisher</div>
-												<span class="text-muted" id="stat-publisher">{{ $publisher }}</span>
-											</div>
-										</div>
-										<div class="w-75 mx-auto mb-3" id="new-sessions"></div>
-									</div>
-
-									<div class="col-sm-4">
-										<div class="d-flex align-items-center justify-content-center mb-2">
-											<a href="#" class="btn bg-transparent border-indigo-400 text-indigo-400 rounded-round border-2 btn-icon mr-3">
-												<i class="icon-people"></i>
-											</a>
-											<div>
-												<div class="font-weight-semibold">Book</div>
-												<span class="text-muted" id="stat-book">{{ $book }}</span>
-											</div>
-										</div>
-										<div class="w-75 mx-auto mb-3" id="total-online"></div>
-									</div>
-								</div>
-							</div>
-
-							<!-- <div class="chart position-relative" id="traffic-sources"></div> -->
-						</div>
-						<!-- /statistics -->
-
-					</div>
-				</div>
-
 				<!-- Dashboard content -->
 				<div class="row">
 					<div class="col-xl-12">
@@ -141,7 +75,7 @@
 						<!-- Marketing campaigns -->
 						<div class="card">
 							<div class="card-header header-elements-sm-inline">
-								<h6 class="card-title">Marketing campaigns</h6>
+								<h6 class="card-title">Chapter Of {{ $bookTitle }}</h6>
 								<div class="header-elements">
 									<div class="list-icons ml-3">
 				                		<div class="dropdown">
@@ -172,44 +106,47 @@
 									<thead>
 										<tr>
 											<th>Title</th>
+											<th>Publish</th>
 											<th>Author</th>
-											<th>ISBN</th>
-											<th>Chapter</th>
-											<th>Category</th>
 											<th class="text-center" style="width: 20px;"><i class="icon-arrow-down12"></i></th>
 										</tr>
 									</thead>
 									<tbody>
-										@foreach($books as $book)
+										@foreach($listChapters as $chapter)
 										<tr>
 											<td>
 												<div class="d-flex align-items-center">
 													<div class="mr-3">
 														<a href="#">
-															<img src="{{ $book->url_cover ? asset('storage/' . $book->url_cover) : asset('storage/covers/book.jpg') }}" class="rounded-circle" width="32" height="32" alt="">
+															<img src="{{ $chapter->book && $chapter->book->url_cover ? asset('storage/' . $chapter->book->url_cover) : asset('storage/covers/book.jpg') }}"
+																 class="rounded-circle" width="32" height="32" alt="">
 														</a>
 													</div>
 													<div>
-														<a href="#" class="text-default font-weight-semibold">{{ $book->title }}</a>
+														<a href="#" class="text-default font-weight-semibold">{{ $chapter->title }}</a>
 														<div class="text-muted font-size-sm">
 															<span class="badge badge-mark border-blue mr-1"></span>
-															{{ $book->published_date ?? '-' }}
+															{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}
 														</div>
 													</div>
 												</div>
 											</td>
-											<td><span class="text-muted">{{ $book->author }}</span></td>
-											<td><span class="text-success-600">{{ $book->isbn }}</span></td>
-											<td><h6 class="font-weight-semibold mb-0">{{ $book->chapters ? $book->chapters->count() : 0 }}</h6></td>
-											<td><span class="badge bg-blue">{{ $book->category->name ?? '-' }}</span></td>
+											<td><span class="text-muted">{{ $chapter->book->author ?? '-' }}</span></td>
+											<td><span class="text-success-600">{{ $chapter->book->isbn ?? '-' }}</span></td>
 											<td class="text-center">
 												<div class="list-icons">
 													<div class="dropdown">
 														<a href="#" class="list-icons-item dropdown-toggle caret-0" data-toggle="dropdown"><i class="icon-menu7"></i></a>
 														<div class="dropdown-menu dropdown-menu-right">
-															<a href="#" class="dropdown-item"><i class="icon-file-stats"></i> View</a>
+															<a href="{{ route('chapters.download_pdf', ['bookId' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item"><i class="icon-file-stats" ></i>Download</a>
 															<a href="#" class="dropdown-item"><i class="icon-file-text2"></i> Edit</a>
-															<a href="#" class="dropdown-item"><i class="icon-file-locked"></i> Delete</a>
+															<form action="{{ route('chapters.destroy', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" method="POST" style="display:inline;">
+															    @csrf
+															    @method('DELETE')
+															    <button type="submit" class="dropdown-item" style="border:none; background:none; padding:0;">
+																    <i class="icon-file-locked"></i> Delete
+															    </button>
+															</form>
 														</div>
 													</div>
 												</div>

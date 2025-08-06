@@ -8,6 +8,11 @@ use App\User;
 
 class ProfileController extends Controller
 {
+    public function index()
+    {
+        // This method can be used to redirect to the profile view or handle other logic
+        // return redirect()->route('profile.show');
+    }
     /**
      * Display the user's profile.
      *
@@ -15,12 +20,11 @@ class ProfileController extends Controller
      */
     public function show()
     {
-        // Logic to display user profile
         $user = auth()->user();
         if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
+            return redirect()->route('login')->with('error', 'You must be logged in.');
         }
-        return response()->json($user);
+        return view('auth.update', compact('user'));
     }
 
     /**
@@ -49,6 +53,11 @@ class ProfileController extends Controller
             if (!$user) {
                 return response()->json(['message' => 'User not found'], 404);
             }
+        }
+
+        if ($request->hasFile('picture')) {
+            $picturePath = $request->file('picture')->store('profile_pictures', 'public');
+            $validatedData['picture'] = $picturePath;
         }
 
         $user->update($validatedData);

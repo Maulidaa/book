@@ -8,6 +8,7 @@ use App\Book;
 use App\Exports\BookExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\User;
+use App\Category;
 
 class BookController extends Controller
 {
@@ -19,14 +20,25 @@ class BookController extends Controller
     public function index(Request $request)
     {
         try {
-            // Ambil relasi jika perlu
+            $user = auth()->user();
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'You must be logged in to view this page.');
+            }
+
+            // Filter buku hanya milik author yang sedang login (berdasarkan nama)
+            if ($user->role_id == 2) {
+                $books = Book::with(['category', 'chapters'])
+                    ->where('author', $user->name)
+                    ->paginate(10);
+            } else {
+                $books = Book::with(['category', 'chapters'])->limit(10)->get();
+            }
+
             $author = User::where('role_id', 2)->count();
             $publisher = User::where('role_id', 3)->count();
             $book = Book::count();
-            // Ambil data buku beserta relasi category dan chapters
-            $books = Book::with(['category', 'chapters'])->limit(10)->get();
 
-            return view('book.list_book', compact('author', 'publisher', 'book', 'books'));
+            return view('book.list_book', compact('author', 'publisher', 'book', 'books', 'user'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load books'], 500);
         }
@@ -39,7 +51,21 @@ class BookController extends Controller
      */
     public function create(Request $request)
     {
-        // Logic to show the form for creating a new book
+        try {
+            $user = auth()->user();
+            $categories = Category::all();
+            $authors = null;
+            if ($user->role_id == 1) {
+                $authors = User::where('role_id', 2)->pluck('name', 'id');
+            }
+            if (!$user) {
+                return redirect()->route('login')->with('error', 'You must be logged in to create a book.');
+            }
+            
+            return view('book.create', compact('categories', 'user', 'authors'));
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to load create book form'], 500);
+        }
     }
 
     /**
@@ -50,40 +76,42 @@ class BookController extends Controller
      */
     public function store(Request $request)
     {
-        // Logic to store a new book
         try {
+            $user = auth()->user();
             $validatedData = $request->validate([
                 'title' => 'required|string|max:255',
-                'author' => 'required|string|max:255',
                 'description' => 'nullable|string',
                 'cover' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
                 'category_id' => 'nullable|exists:categories,id',
+                'isbn' => 'nullable|string|max:255',
+                // author_id hanya required jika admin
+                'author_id' => $user->role_id == 1 ? 'required|exists:users,id' : '',
             ]);
 
-            // Handle file upload if cover image is provided
             if ($request->hasFile('cover')) {
                 $coverPath = $request->file('cover')->store('covers', 'public');
                 $validatedData['url_cover'] = $coverPath;
             }
 
-            // Create a new book instance
+            // Set author_id sesuai role
+            $author_id = $user->role_id == 1 ? $request->input('author_id') : $user->id;
+
             $book = Book::create([
                 'title' => $validatedData['title'],
-                'url_cover' => $validatedData['url_cover'],
-                'author' => $validatedData['author'],
+                'url_cover' => $validatedData['url_cover'] ?? null,
+                'author_id' => $author_id,
                 'description' => $validatedData['description'],
                 'category_id' => $validatedData['category_id'],
-                'isbn' => $request->input('isbn'),
+                'isbn' => $validatedData['isbn'],
             ]);
 
             if ($book) {
-                return response()->json([
-                    'message' => 'Book created successfully',
-                    'book' => $book,
-                ], 201);
+                return redirect()->route('books.create')->with('success', 'Book created successfully.');
+            } else {
+                return redirect()->back()->with('error', 'Failed to create book.');
             }
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to load create book form'], 500);
+            return response()->json(['error' => 'Failed to create book'], 500);
         }
     }
 

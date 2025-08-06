@@ -23,13 +23,17 @@
             <div class="card-body">
                 <div class="text-center mb-3">
                     <i class="icon-user-lock icon-2x text-indigo-300"></i>
-                    <h5 class="mb-0 mt-2">Login to your account</h5>
+                    <h5 class="mb-0 mt-2">Register to your account</h5>
                 </div>
                 @if(session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
                 @endif
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('register') }}">
                     @csrf
+                    <div class="form-group">
+                        <label class="mb-0">Name:</label>
+                        <input type="text" name="name" class="form-control" required autofocus>
+                    </div>
                     <div class="form-group">
                         <label class="mb-0">Email:</label>
                         <input type="email" name="email" class="form-control" required autofocus>
@@ -38,10 +42,14 @@
                         <label class="mb-0">Password:</label>
                         <input type="password" name="password" class="form-control" required>
                     </div>
-                    <button type="submit" class="btn bg-indigo-300 btn-block">Login</button>
+                    <div class="form-group">
+                        <label class="mb-0">Confirm Password:</label>
+                        <input type="password" name="password_confirmation" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn bg-indigo-300 btn-block">Register</button>
                 </form>
                 <div class="text-center mt-3">
-                    <a href="{{ route('register') }}">Don't have an account? Register</a>
+                    <a href="{{ route('login') }}">Have an account? Login</a>
                 </div>
             </div>
         </div>

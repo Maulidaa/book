@@ -17,12 +17,13 @@ class CreateBooksTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('url_cover')->default('covers/book.jpg');
-            $table->string('author');
+            $table->bigIncrements('author_id');
+            $table->foreign('author_id')->references('id')->on('authors');
             $table->text('description')->nullable();
             $table->date('published_date')->nullable();
             $table->string('isbn')->unique()->nullable();
             $table->unsignedBigInteger('category_id');
-            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('category_id')->references('id')->on('categories');   
             $table->timestamps();
         });
     }
