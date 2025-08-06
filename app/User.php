@@ -58,4 +58,13 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
+    /**
+     * Get the role associated with the user.
+     */
+    
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
 }

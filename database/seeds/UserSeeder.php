@@ -13,6 +13,7 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        // Admin
         User::create([
             'name' => 'Admin',
             'email' => 'admin@example.com',
@@ -22,12 +23,23 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
         ]);
 
-        for ($i = 1; $i <= 30; $i++) {
+        // Author
+        User::create([
+            'name' => 'Author One',
+            'email' => 'author1@example.com',
+            'password' => Hash::make('password123'),
+            'role_id' => 2,
+            'picture' => null,
+            'email_verified_at' => now(),
+        ]);
+
+        // Readers (default user)
+        for ($i = 1; $i <= 10; $i++) {
             User::create([
-                'name' => 'User ' . $i,
-                'email' => 'user' . $i . '@example.com',
+                'name' => 'Reader ' . $i,
+                'email' => 'reader' . $i . '@example.com',
                 'password' => Hash::make('password123'),
-                'role_id' => rand(2, 3),
+                'role_id' => 3,
                 'picture' => null,
                 'email_verified_at' => now(),
             ]);

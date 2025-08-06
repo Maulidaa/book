@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use App\User;
 
 class BookSeeder extends Seeder
 {
@@ -12,11 +13,13 @@ class BookSeeder extends Seeder
      */
     public function run()
     {
+        $author = User::where('role_id', 2)->first();
+
         DB::table('books')->insert([
             [
                 'title' => 'The Great Gatsby',
                 'url_cover' => 'covers/great_gatsby.jpg',
-                'author' => 'F. Scott Fitzgerald',
+                'author_id' => $author ? $author->id : null,
                 'isbn' => '9780743273565',
                 'description' => 'A novel set in the Roaring Twenties, exploring themes of decadence and excess.',
                 'published_date' => '1925-04-10',
@@ -25,7 +28,7 @@ class BookSeeder extends Seeder
             [
                 'title' => 'A Brief History of Time',
                 'url_cover' => 'covers/brief_history_time.jpg',
-                'author' => 'Stephen Hawking',
+                'author_id' => $author ? $author->id : null,
                 'isbn' => '9780553380163',
                 'description' => 'An overview of cosmology from the Big Bang to black holes.',
                 'published_date' => '1988-04-01',

@@ -75,7 +75,7 @@ class ChapterController extends Controller
         $chapter = Chapter::find($chapterId);
         if ($chapter) {
             $chapter->delete();
-            return redirect()->route('chapters.index', ['id' => $bookId])->with('success', 'Chapter deleted successfully');
+            return redirect()->route('books.chapters', ['id' => $bookId])->with('success', 'Chapter deleted successfully');
         }
         return redirect()->back()->with('error', 'Chapter not found');
     }

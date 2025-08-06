@@ -16,6 +16,8 @@ class CreateChaptersTable extends Migration
         Schema::create('chapters', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('book_id');
+            $table->string('chapter_cover')->nullable();
+            $table->enum('status', ['draft', 'published', 'archived'])->default('draft');
             $table->string('title');
             $table->longText('content')->nullable();
             $table->foreign('book_id')->references('id')->on('books')->onDelete('cascade');

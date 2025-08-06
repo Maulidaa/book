@@ -106,7 +106,7 @@
 									<thead>
 										<tr>
 											<th>Title</th>
-											<th>Status</th>
+											<th>Publish</th>
 											<th>Author</th>
 											<th class="text-center" style="width: 20px;"><i class="icon-arrow-down12"></i></th>
 										</tr>
@@ -131,11 +131,8 @@
 													</div>
 												</div>
 											</td>
-											<!-- <td>
-												<span class="badge badge-success">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span> -->
-											<td>
-												<span class="text-muted">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span>
-											<td><span class="text-muted">{{ $chapter->book->author ?? '-' }}</span></td>	
+											<td><span class="text-muted">{{ $chapter->book->author ?? '-' }}</span></td>
+											<td><span class="text-success-600">{{ $chapter->book->isbn ?? '-' }}</span></td>
 											<td class="text-center">
 												<div class="list-icons">
 													<div class="dropdown">

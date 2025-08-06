@@ -4,11 +4,9 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Comment extends Model
+class Read extends Model
 {
-    protected $fillable = [
-        'user_id', 'chapter_id', 'content',
-    ];
+    protected $fillable = ['user_id', 'chapter_id'];
 
     public function user()
     {

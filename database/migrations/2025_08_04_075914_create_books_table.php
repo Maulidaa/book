@@ -17,8 +17,8 @@ class CreateBooksTable extends Migration
             $table->bigIncrements('id');
             $table->string('title');
             $table->string('url_cover')->default('covers/book.jpg');
-            $table->bigIncrements('author_id');
-            $table->foreign('author_id')->references('id')->on('authors');
+            $table->unsignedBigInteger('author_id');
+            $table->foreign('author_id')->references('id')->on('users'); // relasi ke users, bukan authors
             $table->text('description')->nullable();
             $table->date('published_date')->nullable();
             $table->string('isbn')->unique()->nullable();
