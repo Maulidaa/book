@@ -144,6 +144,18 @@ class ChapterController extends Controller
         return $pdf->download("chapter_{$title}.pdf");
     }
 
+    public function download_all_chapters($bookId)
+    {
+        $chapters = Chapter::where('book_id', $bookId)->get();
+        if ($chapters->isEmpty()) {
+            return redirect()->back()->with('error', 'No chapters found for this book');
+        }
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('chapters.pdf_all_chapters', ['chapters' => $chapters]);
+        return $pdf->download("all_chapters_book_{$bookId}.pdf");
+    }
+    
     public function destroy($bookId, $chapterId)
     {
         $chapter = Chapter::find($chapterId);

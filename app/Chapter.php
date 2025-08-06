@@ -20,6 +20,6 @@ class Chapter extends Model
 
     public function reader()
     {
-        return $this->belongsTo(User::class, 'reader_id');
+        return $this->hasMany(Read::class, 'chapter_id');
     }
 }

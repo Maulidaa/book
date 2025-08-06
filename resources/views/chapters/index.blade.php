@@ -160,8 +160,8 @@
 							<div class="card-body d-sm-flex align-items-sm-center justify-content-sm-between flex-sm-wrap">
 								
 								<div>
-									<a href="{{ route('books.export.excel') }}" class="btn bg-indigo-300">
-										<i class="icon-statistics mr-2"></i> Export To Excel
+									<a href="{{ route('chapters.download_all', ['id' => $bookId]) }}" class="btn bg-indigo-300">
+										<i class="icon-statistics mr-2"></i> Export All Chapters
 									</a>
 								</div>
 							</div>

@@ -39,5 +39,7 @@ Route::prefix('books/{id}/chapters')->group(function () {
     Route::get('/{chapterId}/edit', [ChapterController::class, 'edit'])->name('chapters.edit');
     Route::put('/{chapterId}', [ChapterController::class, 'update'])->name('chapters.update');
     Route::delete('/{chapterId}', [ChapterController::class, 'destroy'])->name('chapters.destroy');
+    Route::get('/download_all_chapters', [ChapterController::class, 'download_all_chapters'])->name('chapters.download_all');
     Route::get('/{chapterId}/download-pdf', [ChapterController::class, 'download_pdf'])->name('chapters.download_pdf');
+
 });
