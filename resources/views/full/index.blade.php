@@ -105,7 +105,7 @@
 												<i class="icon-watch2"></i>
 											</a>
 											<div>
-												<div class="font-weight-semibold">Publisher</div>
+												<div class="font-weight-semibold">Reader</div>
 												<span class="text-muted" id="stat-publisher">{{ $publisher }}</span>
 											</div>
 										</div>
@@ -141,20 +141,8 @@
 						<!-- Marketing campaigns -->
 						<div class="card">
 							<div class="card-header header-elements-sm-inline">
-								<h6 class="card-title">Marketing campaigns</h6>
+								<h6 class="card-title">Books</h6>
 								<div class="header-elements">
-									<div class="list-icons ml-3">
-				                		<div class="dropdown">
-				                			<a href="#" class="list-icons-item dropdown-toggle" data-toggle="dropdown"><i class="icon-menu7"></i></a>
-											<div class="dropdown-menu">
-												<a href="#" class="dropdown-item"><i class="icon-sync"></i> Update data</a>
-												<a href="#" class="dropdown-item"><i class="icon-list-unordered"></i> Detailed log</a>
-												<a href="#" class="dropdown-item"><i class="icon-pie5"></i> Statistics</a>
-												<div class="dropdown-divider"></div>
-												<a href="#" class="dropdown-item"><i class="icon-cross3"></i> Clear list</a>
-											</div>
-				                		</div>
-				                	</div>
 			                	</div>
 							</div>
 
@@ -198,7 +186,7 @@
 													</div>
 												</div>
 											</td>
-											<td><span class="text-muted">{{ $book->author }}</span></td>
+											<td><span class="text-muted">{{ $book->author ? $book->author->name : '-' }}</span></td>
 											<td><span class="text-success-600">{{ $book->isbn }}</span></td>
 											<td><h6 class="font-weight-semibold mb-0">{{ $book->chapters ? $book->chapters->count() : 0 }}</h6></td>
 											<td><span class="badge bg-blue">{{ $book->category->name ?? '-' }}</span></td>

@@ -6,20 +6,37 @@ use App\Book;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Chapter;
-use Barryvdh\DomPDF\PDF;
 
 class ChapterController extends Controller
 {
     public function index($id)
     {
         $user = auth()->user();
-        $bookTitle = Book::find($id)->title ?? 'Unknown Book';
+        $book = Book::with('author')->find($id); // Pastikan ini di atas
+        $bookTitle = $book ? $book->title : 'Unknown Book';
         $listChapters = Chapter::with('book')->where('book_id', $id)->get();
+        $status = Chapter::where('book_id', $id)->distinct()->pluck('status')->toArray();
+
+        // Statistik
+        $countChapters = $listChapters->count();
+        $countComments = Chapter::where('book_id', $id)->withCount('comments')->get()->sum('comments_count');
+        $countViews = Chapter::where('book_id', $id)->withCount('reader')->get()->sum('reader_count');
+        $author = $book && $book->author ? $book->author->name : '-';
+        $publisher = $book && $book->publisher ? $book->publisher->name : '-';
+        $bookCount = Book::count();
+
         return view('chapters.index', [
             'bookId' => $id,
             'bookTitle' => $bookTitle,
             'listChapters' => $listChapters,
-            'user' => $user
+            'author' => $author,
+            'publisher' => $publisher,
+            'book' => $bookCount,
+            'countChapters' => $countChapters,
+            'views' => $countViews,
+            'comments' => $countComments,
+            'user' => $user,
+            'status' => $status,
         ]);
     }
     
@@ -33,27 +50,84 @@ class ChapterController extends Controller
     {
         $book = Book::find($bookId);
         $user = auth()->user(); 
+
         return view('chapters.create', [
             'bookId' => $bookId,
-            'bookTitle' => $book->title,
-            'user' => $user 
+            'bookTitle' => $book ? $book->title : '',
+            'user' => $user
         ]);
     }
 
     public function store(Request $request, $bookId)
     {
-        // Logic to store a new chapter for a specific book
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
+            'chapter_cover' => 'nullable|image|max:2048',
+            'status' => 'nullable|in:published,draft,archived', // Optional status field
+
         ]);
 
-        $book = Book::find($bookId);
         $chapter = new Chapter($validated);
         $chapter->book_id = $bookId;
+
+        if ($request->hasFile('chapter_cover')) {
+            $chapter->chapter_cover = $request->file('chapter_cover')->store('covers', 'public');
+        }
+
         $chapter->save();
 
-        return redirect()->route('chapters.create', ['id' => $bookId]);
+        return redirect()->route('books.chapters', ['id' => $bookId])
+                         ->with('success', 'Chapter created successfully');
+    }
+
+    public function edit($id, $chapterId)
+    {
+        $chapter = Chapter::find($chapterId);
+        $book = Book::find($id);
+        $user = auth()->user();
+        $books = Book::all(); 
+
+        if (!$chapter) {
+            return redirect()->back()->with('error', 'Chapter not found');
+        }
+        return view('chapters.edit', [
+            'mode' => 'edit',
+            'bookId' => $id,
+            'bookTitle' => $book ? $book->title : '',
+            'chapter' => $chapter,
+            'user' => $user,
+            'books' => $books 
+        ]);
+    }
+
+    public function update(Request $request, $bookId, $chapterId)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'chapter_cover' => 'nullable|image|max:2048',
+            'status' => 'nullable|in:published,draft,archived',
+        ]);
+
+        $chapter = Chapter::find($chapterId);
+        if (!$chapter) {
+            return redirect()->back()->with('error', 'Chapter not found');
+        }
+
+        $chapter->title = $validated['title'];
+        $chapter->content = $validated['content'];
+        $chapter->status = $validated['status'] ?? $chapter->status;
+
+        // Update cover jika ada file baru
+        if ($request->hasFile('chapter_cover')) {
+            $chapter->chapter_cover = $request->file('chapter_cover')->store('covers', 'public');
+        }
+
+        $chapter->save();
+
+        return redirect()->route('books.chapters', ['id' => $bookId])
+                         ->with('success', 'Chapter updated successfully');
     }
 
     public function download_pdf($bookId, $chapterId)

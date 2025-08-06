@@ -132,7 +132,7 @@
 													</div>
 												</div>
 											</td>
-											<td><span class="text-muted">{{ $book->author }}</span></td>
+											<td><span class="text-muted">{{ $book->author ? $book->author->name : '-' }}</span></td>
 											<td><span class="text-success-600">{{ $book->isbn }}</span></td>
 											<td><h6 class="font-weight-semibold mb-0">{{ $book->chapters ? $book->chapters->count() : 0 }}</h6></td>
 											<td><span class="badge bg-blue">{{ $book->category->name ?? '-' }}</span></td>

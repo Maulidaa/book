@@ -68,6 +68,71 @@
 			<!-- Content area -->
 			<div class="content">
 
+			<!-- Main charts -->
+				<div class="row">
+					<div class="col-xl-12">
+
+						<!-- Statistics -->
+						<div class="card">
+							<div class="card-header header-elements-inline">
+								<h6 class="card-title">Statistics</h6>
+								<div class="header-elements">
+									<div class="form-check form-check-right form-check-switchery form-check-switchery-sm">
+									</div>
+								</div>
+							</div>
+
+							<div class="card-body py-0">
+								<div class="row">
+									<div class="col-sm-4">
+										<div class="d-flex align-items-center justify-content-center mb-2">
+											<a href="#" class="btn bg-transparent border-teal text-teal rounded-round border-2 btn-icon mr-3">
+												<i class="icon-plus3"></i>
+											</a>
+											<div>
+												<div class="font-weight-semibold">Chapter</div>
+												<span class="text-muted" id="stat-author">{{ $countChapters }}</span>
+											</div>
+										</div>
+										<div class="w-75 mx-auto mb-3" id="new-visitors"></div>
+									</div>
+
+									<div class="col-sm-4">
+										<div class="d-flex align-items-center justify-content-center mb-2">
+											<a href="#" class="btn bg-transparent border-warning-400 text-warning-400 rounded-round border-2 btn-icon mr-3">
+												<i class="icon-watch2"></i>
+											</a>
+											<div>
+												<div class="font-weight-semibold">Comment</div>
+												<span class="text-muted" id="stat-publisher">{{ $comments }}</span>
+											</div>
+										</div>
+										<div class="w-75 mx-auto mb-3" id="new-sessions"></div>
+									</div>
+
+									<div class="col-sm-4">
+										<div class="d-flex align-items-center justify-content-center mb-2">
+											<a href="#" class="btn bg-transparent border-indigo-400 text-indigo-400 rounded-round border-2 btn-icon mr-3">
+												<i class="icon-people"></i>
+											</a>
+											<div>
+												<div class="font-weight-semibold">Views</div>
+												<span class="text-muted" id="stat-book">{{ $views }}</span>
+											</div>
+										</div>
+										<div class="w-75 mx-auto mb-3" id="total-online"></div>
+									</div>
+								</div>
+							</div>
+
+							<!-- <div class="chart position-relative" id="traffic-sources"></div> -->
+						</div>
+						<!-- /statistics -->
+
+					</div>
+				</div>
+				<!-- /main charts -->
+
 				<!-- Dashboard content -->
 				<div class="row">
 					<div class="col-xl-12">
@@ -106,8 +171,9 @@
 									<thead>
 										<tr>
 											<th>Title</th>
-											<th>Status</th>
+											<th>Publish Date</th>
 											<th>Author</th>
+											<th>Status</th>
 											<th class="text-center" style="width: 20px;"><i class="icon-arrow-down12"></i></th>
 										</tr>
 									</thead>
@@ -118,7 +184,7 @@
 												<div class="d-flex align-items-center">
 													<div class="mr-3">
 														<a href="#">
-															<img src="{{ $chapter->book && $chapter->book->url_cover ? asset('storage/' . $chapter->book->url_cover) : asset('storage/covers/book.jpg') }}"
+															<img src="{{ $chapter->book && $chapter->chapter_cover ? asset('storage/' . $chapter->chapter_cover) : asset('storage/covers/book.jpg') }}"
 																 class="rounded-circle" width="32" height="32" alt="">
 														</a>
 													</div>
@@ -135,16 +201,17 @@
 												<span class="badge badge-success">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span> -->
 											<td>
 												<span class="text-muted">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span>
-											<td><span class="text-muted">{{ $chapter->book->author ?? '-' }}</span></td>	
+											<td><span class="text-muted">{{ $chapter->book->author->name ?? '-' }}</span></td>
+											<td><span class="badge bg-blue">{{ $chapter->status ?? '-' }}</span></td>	
 											<td class="text-center">
 												<div class="list-icons">
 													<div class="dropdown">
 														<a href="#" class="list-icons-item dropdown-toggle caret-0" data-toggle="dropdown"><i class="icon-menu7"></i></a>
 														<div class="dropdown-menu dropdown-menu-right">
-															<a href="{{ route('chapters.download_pdf', ['bookId' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item">
+															<a href="{{ route('chapters.download_pdf', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item">
 																<i class="icon-file-stats"></i> Download
 															</a>
-															<a href="#" class="dropdown-item">
+															<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item">
 																<i class="icon-file-text2"></i> Edit
 															</a>
 															<form action="{{ route('chapters.destroy', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" method="POST" style="display:inline;">
@@ -185,26 +252,7 @@
 	 
 	
 	<!-- Footer -->
-	<div class="navbar navbar-expand-lg navbar-light">
-		<div class="text-center d-lg-none w-100">
-			<button type="button" class="navbar-toggler dropdown-toggle" data-toggle="collapse" data-target="#navbar-footer">
-				<i class="icon-unfold mr-2"></i>
-				Footer
-			</button>
-		</div>
-
-		<div class="navbar-collapse collapse" id="navbar-footer">
-			<span class="navbar-text">
-				&copy; 2015 - 2018. <a href="#">Limitless Web App Kit</a> by <a href="http://themeforest.net/user/Kopyov" target="_blank">Eugene Kopyov</a>
-			</span>
-
-			<ul class="navbar-nav ml-lg-auto">
-				<li class="nav-item"><a href="https://kopyov.ticksy.com/" class="navbar-nav-link" target="_blank"><i class="icon-lifebuoy mr-2"></i> Support</a></li>
-				<li class="nav-item"><a href="http://demo.interface.club/limitless/docs/" class="navbar-nav-link" target="_blank"><i class="icon-file-text2 mr-2"></i> Docs</a></li>
-				<li class="nav-item"><a href="https://themeforest.net/item/limitless-responsive-web-application-kit/13080328?ref=kopyov" class="navbar-nav-link font-weight-semibold"><span class="text-pink-400"><i class="icon-cart2 mr-2"></i> Purchase</span></a></li>
-			</ul>
-		</div>
-	</div>
+	@include('main.footer')
 	<!-- /footer -->
 		
 </body>

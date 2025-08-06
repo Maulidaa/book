@@ -66,7 +66,7 @@
 		<!-- Main sidebar -->
 		@include('main.sidebar')
 		<!-- /main sidebar -->
-		 
+
 		<!-- Main content -->
 		<div class="content-wrapper">
 

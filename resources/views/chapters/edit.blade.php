@@ -100,35 +100,40 @@
                                     </div>
                                 @endif
 
-                                <form action="{{ route('chapters.store', ['id' => $bookId]) }}" method="POST" enctype="multipart/form-data">
+                                <form action="{{ route('chapters.update', ['id' => $bookId, 'chapterId' => $chapter->id]) }}" method="POST" enctype="multipart/form-data">
                                     @csrf
+                                    @method('PUT')
                                     <div class="form-group">
-                                        <label class="mb-1">Chapter Cover</label>
+                                        <label>Chapter Cover</label>
                                         <input type="file" name="chapter_cover" class="form-control-file" id="cover-input">
-                                        <img id="cover-preview"
-                                             src="{{ asset('storage/covers/book.jpg') }}"
-                                             alt="Cover Preview"
-                                             style="max-width:150px; margin-top:10px; display:none;" />
+                                        @php
+                                            $cover = $chapter->chapter_cover
+                                                ? asset('storage/' . $chapter->chapter_cover)
+                                                : asset('storage/covers/book.jpg');
+                                        @endphp
+										<img id="cover-preview" src="{{ $cover }}" alt="Cover Preview"
+											 style="max-width:150px; margin-top:10px;" {{ $cover == asset('storage/covers/book.jpg') ? 'hidden' : '' }} />
                                     </div>
-                                    <div class="form-group">
+									<div class="form-group">
                                         <label class="mb-1">Title</label>
-                                        <input type="text" name="title" class="form-control" value="{{ old('title') }}" required>
+                                        <input type="text" name="title" class="form-control" value="{{ $chapter->title }}" required>
                                     </div>
                                     <div class="form-group">
                                         <label class="mb-1">Content</label>
-                                        <textarea name="content" class="form-control" rows="10" required>{{ old('content') }}</textarea>
+                                        <textarea name="content" class="form-control" rows="10" required>{{ $chapter->content }}</textarea>
                                     </div>
                                     <div class="form-group">
-                                        <label class="mb-1">Status</label>
+                                        <label>Status</label>
                                         <select name="status" class="form-control" required>
                                             <option value="">- Choose Status -</option>
-                                            <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
-                                            <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
-                                            <option value="archived" {{ old('status') == 'archived' ? 'selected' : '' }}>Archived</option>
+                                            <option value="published" {{ old('status', $chapter->status) == 'published' ? 'selected' : '' }}>Published</option>
+                                            <option value="draft" {{ old('status', $chapter->status) == 'draft' ? 'selected' : '' }}>Draft</option>
+                                            <option value="archived" {{ old('status', $chapter->status) == 'archived' ? 'selected' : '' }}>Archived</option>
                                         </select>
                                     </div>
-                                    <button type="submit" class="btn bg-indigo-300 btn-block">Save Chapter</button>
+                                    <button type="submit" class="btn bg-indigo-300 btn-block">Update Chapter</button>
                                 </form>
+								
 
                                 <script>
                                 $(document).ready(function() {
