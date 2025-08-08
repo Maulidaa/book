@@ -27,6 +27,12 @@ class ChapterController extends Controller
         $publisher = $book && $book->publisher ? $book->publisher->name : '-';
         $bookCount = Book::count();
 
+        $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Chapter', 'url' => '']
+        ];
+
         return view('chapters.index', [
             'bookId' => $id,
             'bookTitle' => $bookTitle,
@@ -39,7 +45,10 @@ class ChapterController extends Controller
             'comments' => $countComments,
             'user' => $user,
             'status' => $status,
+            'breadcrumb' => $breadcrumb
         ]);
+
+        
     }
     
     public function show($bookId, $chapterId)
@@ -51,14 +60,20 @@ class ChapterController extends Controller
         $comments = $chapter->comments;
 
         $penulis = $book && $book->author ? $book->author->name : '-';
-
+        $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Chapter', 'url' => route('books.chapters', ['id' => $bookId])],
+                ['title' => 'Detail', 'url' => '']
+        ];
         if($user != $penulis){
             Read::create([
                 'user_id' => $user->id,
                 'chapter_id' => $chapterId,
-                'book_id' => $bookId // Tambahkan ini
+                'book_id' => $bookId,
             ]);
         }
+
         
         return view('chapters.show', [
             'chapter' => $chapter,
@@ -66,7 +81,8 @@ class ChapterController extends Controller
             'chapterId' => $chapterId,
             'comments' => $comments,
             'bookTitle' => $bookTitle,
-            'user' => $user
+            'user' => $user,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 
@@ -75,10 +91,17 @@ class ChapterController extends Controller
         $book = Book::find($bookId);
         $user = auth()->user(); 
 
+        $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Chapter', 'url' => route('books.chapters', ['id' => $bookId])],
+                ['title' => 'Create', 'url' => '']
+        ];
         return view('chapters.create', [
             'bookId' => $bookId,
             'bookTitle' => $book ? $book->title : '',
-            'user' => $user
+            'user' => $user,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 
@@ -115,13 +138,22 @@ class ChapterController extends Controller
         if (!$chapter) {
             return redirect()->back()->with('error', 'Chapter not found');
         }
+        $bookId = $book ? $book->id : null;
+         $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Chapter', 'url' => route('books.chapters', ['id' => $bookId])],
+                ['title' => 'Edit', 'url' => '']
+        ];
+
         return view('chapters.edit', [
             'mode' => 'edit',
             'bookId' => $id,
             'bookTitle' => $book ? $book->title : '',
             'chapter' => $chapter,
             'user' => $user,
-            'books' => $books 
+            'books' => $books,
+            'breadcrumb' => $breadcrumb
         ]);
     }
 
@@ -196,7 +228,7 @@ class ChapterController extends Controller
         return DataTables::of($query)
             ->addColumn('action', function ($chapter) {
                 // Ganti ke partial yang sudah ada
-                return view('chapter.partials.actions', compact('chapter'))->render();
+                return view('chapters.partials.actions', compact('chapter'))->render();
             })
             ->make(true);
     }

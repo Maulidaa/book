@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+	<title>Book Management</title>
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -143,62 +143,62 @@
 							</div>
 
 							<div class="card-body d-sm-flex align-items-sm-center justify-content-sm-between flex-sm-wrap">
-                                <div>
-                                    <a href="{{ route('chapters.download_all', ['id' => $bookId]) }}" class="btn bg-indigo-300">
-                                        <i class="icon-statistics mr-2"></i> Export All Chapters
-                                    </a>
-									<a href="{{ route('chapters.create', ['id' => $bookId]) }}" class="btn bg-success-600">
-                                        <i class="icon-plus3 mr-2"></i> Create New Chapters
-                                    </a>
-                                </div>
-                            </div>
+								<div>
+									<a href="{{ route('books.export.excel') }}" class="btn bg-indigo-300">
+										<i class="icon-statistics mr-2"></i> Export To Excel
+									</a>
+									<a href="{{ route('books.create') }}" class="btn bg-success-600">
+										<i class="icon-plus3 mr-2"></i> Create New Book
+									</a>
+								</div>
+							</div>
 
 							<!-- Tabel -->
 							<div class="card p-3" style="overflow-x:auto;">
-                                <table id="chapters-table" class="table table-hover text-center w-100">
-                                    <thead>
-                                        <tr>
-                                            <th>Cover</th>
-                                            <th>Title</th>
-                                            <th>Author</th>
-                                            <th>Status</th>
-                                            <th>Created At</th>
-                                            <th>Action</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
-                            <!-- Script DataTables -->
-                            <script>
-                            $(function() {
-                                $('#chapters-table').DataTable({
-                                    processing: true,
-                                    serverSide: true,
-                                    ajax: '{{ route("chapters.data", ["id" => $bookId]) }}',
-                                    dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6'f>>" +
-                                         "<'row'<'col-sm-12'tr>>" +
-                                         "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
-                                    columns: [
-                                        {
-                                            data: 'chapter_cover',
-                                            name: 'chapter_cover',
-                                            orderable: false,
-                                            searchable: false,
-                                            render: function(data, type, row) {
-                                                if (data) {
-                                                    return '<img src="/storage/' + data + '" style="max-width:40px;max-height:40px;object-fit:cover;">';
-                                                }
-                                                return '-';
-                                            }
-                                        },
-                                        { data: 'title', name: 'title' },
-                                        { data: 'book.author.name', name: 'book.author.name', defaultContent: '-' },
-                                        { data: 'status', name: 'status', defaultContent: '-' },
-                                        { data: 'created_at', name: 'created_at', defaultContent: '-' },
-                                        { data: 'action', name: 'action', orderable: false, searchable: false }
-                                    ]
-                                });
-                            });
+								<table id="books-table" class="table table-hover text-center w-100">
+									<thead>
+										<tr>
+											<th>Cover</th>
+											<th>Title</th>
+											<th>Author</th>
+											<th>ISBN</th>
+											<th>Chapter</th>
+											<th>Category</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+								</table>
+							</div>
+
+							<!-- Script DataTables -->
+							<script>
+							$(function() {
+							    $('#books-table').DataTable({
+							        processing: true,
+							        serverSide: true,
+							        ajax: '{{ route("dashboard.booksData") }}',
+							        columns: [
+							            {
+							                data: 'url_cover',
+							                name: 'url_cover',
+							                orderable: false,
+							                searchable: false,
+							                render: function(data, type, row) {
+							                    if (data) {
+							                        return '<img src="/storage/' + data + '" style="max-width:60px;max-height:80px;object-fit:cover;">';
+							                    }
+							                    return '-';
+							                }
+							            },
+							            { data: 'title', name: 'title' },
+							            { data: 'author.name', name: 'author.name', defaultContent: '-' },
+							            { data: 'isbn', name: 'isbn' },
+							            { data: 'chapters_count', name: 'chapters_count', orderable: false, searchable: false, defaultContent: 0 },
+							            { data: 'category.name', name: 'category.name', defaultContent: '-' },
+							            { data: 'action', name: 'action', orderable: false, searchable: false }
+							        ]
+							    });
+							});
 							</script>
 						</div>
 						<!-- /marketing campaigns -->

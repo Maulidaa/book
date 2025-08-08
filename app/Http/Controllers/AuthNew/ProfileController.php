@@ -20,11 +20,15 @@ class ProfileController extends Controller
      */
     public function show()
     {
+        $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Profile', 'url' => route('profile.update')],
+            ];
         $user = auth()->user();
         if (!$user) {
             return redirect()->route('login')->with('error', 'You must be logged in.');
         }
-        return view('auth.update', compact('user'));
+        return view('auth.update', compact('user', 'breadcrumb'));
     }
 
     /**
@@ -61,6 +65,6 @@ class ProfileController extends Controller
         }
 
         $user->update($validatedData);
-        return response()->json(['message' => 'User profile updated successfully']);
+        return redirect()->route('profile')->with('success', 'Profile updated successfully.');
     }
 }

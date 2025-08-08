@@ -4,6 +4,7 @@ namespace App;
 
 use App\User;
 use Illuminate\Database\Eloquent\Model;
+use App\Read;
 
 class Book extends Model
 {
@@ -22,5 +23,10 @@ class Book extends Model
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function read()
+    {
+        return $this->hasMany(Read::class);
     }
 }

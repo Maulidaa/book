@@ -109,7 +109,21 @@
                                     <div class="form-group">
                                         <label class="mb-1">Profile Picture</label>
                                         <input type="file" name="picture" class="form-control-file" id="profile-picture-input">
-                                        <img id="profile-picture-preview" src="#" alt="Profile Picture Preview" style="display:none; max-width:150px; margin-top:10px;" />
+										@if ($user->picture)
+											<img
+												id="profile-picture-preview"
+												src="{{ asset('storage/' . $user->picture) }}"
+												alt="Profile Picture Preview"
+												style="max-width:150px; margin-top:10px;"
+											/>
+										@else
+											<img
+												id="profile-picture-preview"
+												src="#"
+												alt="Profile Picture Preview"
+												style="display:none;"
+											/>
+										@endif
                                     </div>
                                     <button type="submit" class="btn bg-indigo-300 btn-block" formaction="{{ route('profile.update', $user->id) }}">Update Profile</button>
                                 </form>

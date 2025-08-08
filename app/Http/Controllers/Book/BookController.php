@@ -9,6 +9,7 @@ use App\Exports\BookExport;
 use Maatwebsite\Excel\Facades\Excel;
 use App\User;
 use App\Category;
+use Yajra\DataTables\Facades\DataTables;
 
 class BookController extends Controller
 {
@@ -34,14 +35,44 @@ class BookController extends Controller
                 $books = Book::with(['category', 'chapters'])->limit(10)->get();
             }
 
+            $countChapters = $books->sum(function ($book) {
+                return $book->chapters->count();
+            });
             $author = User::where('role_id', 2)->count();
             $publisher = User::where('role_id', 3)->count();
             $book = Book::count();
+            $comments = \App\Comment::count();
+            $views = \App\Read::count();
+            $bookId = $books->pluck('id')->first() ?? null;
 
-            return view('book.list_book', compact('author', 'publisher', 'book', 'books', 'user'));
+            $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+            ];
+
+            return view('book.index', compact('author', 'publisher', 'book', 'books', 'user', 'countChapters', 'comments', 'views', 'bookId', 'breadcrumb'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load books'], 500);
         }
+    }
+
+    public function yourBook(Request $request)
+    {
+        $role = $request->user()->role_id;
+        if($role==1){
+            $query = Book::with(['category', 'author'])->withCount('chapters');
+        }
+        else if($role==2){
+            $query = Book::with(['category', 'author'])->withCount('chapters')->where('author_id', $request->user()->id);
+        }
+        else if($role==3){
+            $query = Book::with(['category', 'author', 'read'])->withCount('chapters')->where('reads.user_id', $request->user()->id);
+        }
+        return DataTables::of($query)
+            ->addColumn('action', function ($book) {
+                return view('book.partials.actions', compact('book'))->render();
+            })
+            ->make(true);
     }
 
     /**
@@ -61,8 +92,14 @@ class BookController extends Controller
             if (!$user) {
                 return redirect()->route('login')->with('error', 'You must be logged in to create a book.');
             }
-            
-            return view('book.create', compact('categories', 'user', 'authors'));
+
+            $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Create', 'url' => '']
+            ];
+
+            return view('book.create', compact('categories', 'user', 'authors', 'breadcrumb'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load create book form'], 500);
         }
@@ -78,7 +115,14 @@ class BookController extends Controller
             if ($user->role_id == 1) {
                 $authors = User::where('role_id', 2)->pluck('name', 'id');
             }
-            return view('book.edit', compact('book', 'categories', 'user', 'authors'));
+
+            $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Book', 'url' => route('books.index')],
+                ['title' => 'Edit', 'url' => '']
+            ];
+
+            return view('book.edit', compact('book', 'categories', 'user', 'authors', 'breadcrumb'));
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to load edit book form'], 500);
         }

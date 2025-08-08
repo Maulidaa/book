@@ -17,4 +17,8 @@ class Read extends Model
     {
         return $this->belongsTo(Chapter::class, 'chapter_id');
     }
+    public function book()
+    {
+        return $this->belongsTo(Book::class, 'book_id');
+    }
 }

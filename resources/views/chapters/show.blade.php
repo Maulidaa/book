@@ -94,7 +94,7 @@
     <button class="btn btn-outline-secondary mb-2" type="button" data-toggle="collapse" data-target="#commentsCollapse" aria-expanded="false" aria-controls="commentsCollapse">
         Show Comments ({{ $comments->count() }})
     </button>
-    <div class="collapse" id="commentsCollapse">
+    <div class="collapse show" id="commentsCollapse">
         <div class="card card-body">
             @foreach($comments as $comment)
                 <div class="mb-2">

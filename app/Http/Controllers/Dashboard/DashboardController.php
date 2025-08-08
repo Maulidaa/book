@@ -21,13 +21,23 @@ class DashboardController extends Controller
         $author = User::where('role_id', 2)->count();
         $publisher = User::where('role_id', 3)->count();
         $book = Book::count();
+        $bookId = Book::latest()->first()->id;
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+        ];
         // Jangan ambil $books di sini!
-        return view('full.index', compact('author', 'publisher', 'book', 'user'));
+        return view('full.index', compact('author', 'publisher', 'book', 'user', 'breadcrumb'));
     }
 
     public function booksData(Request $request)
     {
-        $query = Book::with(['category', 'author'])->withCount('chapters');
+        $role = $request->user()->role_id;
+        if($role==1){
+            $query = Book::with(['category', 'author'])->withCount('chapters');
+        }
+        else{
+            $query = Book::with(['category', 'author'])->withCount('chapters')->where('chapters->status', 'published');
+        }
         return DataTables::of($query)
             ->addColumn('action', function ($book) {
                 return view('book.partials.actions', compact('book'))->render();

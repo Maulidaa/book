@@ -25,7 +25,6 @@
 				<li class="nav-item dropdown">
 					<a href="#" class="navbar-nav-link dropdown-toggle caret-0" data-toggle="dropdown">
 						<i class="icon-bell2"></i>
-						<span class="d-md-none ml-2">Activity</span>
 						<span class="badge badge-pill badge-mark bg-orange-400 border-orange-400 ml-auto ml-md-0"></span>
 					</a>
 					
@@ -65,7 +64,7 @@
 									</div>
 									
 									<div class="media-body">
-										<a href="#">Chris Arney</a> created a new <span class="font-weight-semibold">Design</span> branch in <span class="font-weight-semibold">Limitless</span> repository
+										<a href="#">Chris Arney</a> created a new <span class="font-weight-semibold">Design</span> branch in <span class="font-weight-semibold">WriteReadBook</span> repository
 										<div class="font-size-sm text-muted mt-1">2 hours ago</div>
 									</div>
 								</li>
@@ -226,17 +225,15 @@
 
 				<li class="nav-item dropdown dropdown-user">
 					<a href="#" class="navbar-nav-link d-flex align-items-center dropdown-toggle" data-toggle="dropdown">
-						<img src="../../../../global_assets/images/placeholders/placeholder.jpg" class="rounded-circle mr-2" height="34" alt="">
-						<span>Victoria</span>
+						<img src="{{ $user->picture ? asset('storage/' . $user->picture) : asset('global_assets/images/placeholders/placeholder.jpg') }}"
+											width="38" height="38" class="rounded-circle" alt="">
+						<span>{{ auth()->user()->name }}</span>	
 					</a>
 					
 					<div class="dropdown-menu dropdown-menu-right">
-						<a href="#" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
-						<a href="#" class="dropdown-item"><i class="icon-coins"></i> My balance</a>
-						<a href="#" class="dropdown-item"><i class="icon-comment-discussion"></i> Messages <span class="badge badge-pill bg-blue ml-auto">58</span></a>
+						<a href="{{ route('profile', $user->id) }}" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
 						<div class="dropdown-divider"></div>
-						<a href="#" class="dropdown-item"><i class="icon-cog5"></i> Account settings</a>
-						<a href="#" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
+						<a href="{{ route('logout') }}" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
 					</div>
 				</li>
 			</ul>
