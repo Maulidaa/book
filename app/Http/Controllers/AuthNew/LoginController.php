@@ -3,32 +3,48 @@
 namespace App\Http\Controllers\AuthNew;
 
 use App\Http\Controllers\Controller;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+    /**
+     * Handle the incoming request to login a user.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function login(Request $request)
     {
-        // Validate the request
-        $this->validate($request, [
-            'email' => 'required|email',
-            'password' => 'required|min:6',
+        // Validasi input
+        $request->validate([
+            'email'     => 'required|email',
+            'password'  => 'required'
         ]);
 
-        // Attempt to log the user in
-        if (auth()->attempt(['email' => $request->email, 'password' => $request->password])) {
-            // Redirect to intended page or home
-            return redirect()->intended('home');
+        $user = \App\User::where('email', $request->email)->first();
+
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return redirect()->back()->with('error', 'Email atau Password Anda salah');
         }
 
-        $user = auth()->user();
+        // Cek email sudah diverifikasi
+        if (is_null($user->email_verified_at)) {
+            return redirect()->back()->with('error', 'Silakan verifikasi email Anda terlebih dahulu.');
+        }
 
-        // If login fails, redirect back with an error message
-        //return redirect()->back()->withErrors(['email' => 'Invalid credentials'])->withInput();
-        return response()->json([
-            'user' => $user,
-            'message' => 'Invalid credentials',
-            'status' => 'error',
-        ], 401);
+        // Login user (session based)
+        auth()->login($user);
+
+        // Redirect ke dashboard/index
+        return redirect()->route('dashboard');
+    }
+
+    public function index()
+    {
+        // Logic to show the login form
+        return view('auth.login');
     }
 }

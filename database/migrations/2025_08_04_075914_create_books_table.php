@@ -16,10 +16,14 @@ class CreateBooksTable extends Migration
         Schema::create('books', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('title');
-            $table->string('author');
+            $table->string('url_cover')->default('covers/book.jpg');
+            $table->unsignedBigInteger('author_id');
+            $table->foreign('author_id')->references('id')->on('users'); // relasi ke users, bukan authors
             $table->text('description')->nullable();
             $table->date('published_date')->nullable();
             $table->string('isbn')->unique()->nullable();
+            $table->unsignedBigInteger('category_id');
+            $table->foreign('category_id')->references('id')->on('categories');   
             $table->timestamps();
         });
     }
