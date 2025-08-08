@@ -16,7 +16,8 @@ Route::prefix('auth')->group(function () {
     Route::get('/login', [LoginController::class, 'index'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login');
     Route::post('/update-profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/register', [RegisterController::class, 'index'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.submit');
+    Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
 });

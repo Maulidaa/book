@@ -33,7 +33,7 @@
                         {{ session('success') }} Please verify your email.
                     </div>
                 @endif
-                <form method="POST" action="{{ route('register') }}">
+                <form method="POST" action="{{ route('register.submit') }}">
                     @csrf
                     <div class="form-group">
                         <label class="mb-0">Name:</label>

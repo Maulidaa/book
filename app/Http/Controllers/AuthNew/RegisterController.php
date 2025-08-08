@@ -11,6 +11,7 @@ use App\Mail\VerificatioMail;
 
 class RegisterController extends Controller
 {
+
     public function register(Request $request)
     {
         // Validate the request
