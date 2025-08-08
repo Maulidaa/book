@@ -10,6 +10,8 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\User;
 use App\Category;
 use Yajra\DataTables\Facades\DataTables;
+use App\Comment;
+use App\Read;
 
 class BookController extends Controller
 {
@@ -20,40 +22,42 @@ class BookController extends Controller
      */
     public function index(Request $request)
     {
-        try {
-            $user = auth()->user();
-            if (!$user) {
-                return redirect()->route('login')->with('error', 'You must be logged in to view this page.');
-            }
-
-            // Filter buku hanya milik author yang sedang login (berdasarkan nama)
-            if ($user->role_id == 2) {
-                $books = Book::with(['category', 'chapters'])
-                    ->where('author', $user->name)
-                    ->paginate(10);
-            } else {
-                $books = Book::with(['category', 'chapters'])->limit(10)->get();
-            }
-
-            $countChapters = $books->sum(function ($book) {
-                return $book->chapters->count();
-            });
-            $author = User::where('role_id', 2)->count();
-            $publisher = User::where('role_id', 3)->count();
-            $book = Book::count();
-            $comments = \App\Comment::count();
-            $views = \App\Read::count();
-            $bookId = $books->pluck('id')->first() ?? null;
-
-            $breadcrumb = [
-                ['title' => 'Dashboard', 'url' => route('dashboard')],
-                ['title' => 'Book', 'url' => route('books.index')],
-            ];
-
-            return view('book.index', compact('author', 'publisher', 'book', 'books', 'user', 'countChapters', 'comments', 'views', 'bookId', 'breadcrumb'));
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to load books'], 500);
+        $user = auth()->user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'You must be logged in to view this page.');
         }
+
+        // Filter buku hanya milik author yang sedang login (berdasarkan author_id)
+        if ($user->role_id == 2) {
+            $books = Book::with(['category', 'chapters'])
+                ->where('author_id', $user->id)
+                ->paginate(10);
+        } elseif ($user->role_id == 3) {
+            $books = Book::with(['category', 'chapters'])
+                ->whereHas('reads', function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                })
+                ->paginate(10);
+        } else {
+            $books = Book::with(['category', 'chapters'])->limit(10)->get();
+        }
+
+        $countChapters = $books->sum(function ($book) {
+            return $book->chapters->count();
+        });
+        $author = User::where('role_id', 2)->count();
+        $publisher = User::where('role_id', 3)->count();
+        $book = Book::count();
+        $comments = Comment::count();
+        $views = Read::count();
+        $bookId = $books->pluck('id')->first() ?? null;
+
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'Book', 'url' => route('books.index')],
+        ];
+
+        return view('book.index', compact('author', 'publisher', 'book', 'books', 'user', 'countChapters', 'comments', 'views', 'bookId', 'breadcrumb'));
     }
 
     public function yourBook(Request $request)
@@ -62,11 +66,18 @@ class BookController extends Controller
         if($role==1){
             $query = Book::with(['category', 'author'])->withCount('chapters');
         }
-        else if($role==2){
-            $query = Book::with(['category', 'author'])->withCount('chapters')->where('author_id', $request->user()->id);
+        elseif($role==2){
+            $query = Book::with(['category', 'author'])
+                ->withCount('chapters')
+                ->where('author_id', $request->user()->id);
         }
-        else if($role==3){
-            $query = Book::with(['category', 'author', 'read'])->withCount('chapters')->where('reads.user_id', $request->user()->id);
+        elseif($role==3){
+            // Publisher: ambil buku yang pernah dibaca oleh user ini
+            $query = Book::with(['category', 'author', 'reads'])
+                ->withCount('chapters')
+                ->whereHas('reads', function ($q) use ($request) {
+                    $q->where('user_id', $request->user()->id);
+                });
         }
         return DataTables::of($query)
             ->addColumn('action', function ($book) {

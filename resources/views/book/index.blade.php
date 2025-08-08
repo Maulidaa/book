@@ -75,61 +75,6 @@
 			<!-- Content area -->
 			<div class="content">
 
-				<!-- Main charts -->
-				<div class="row">
-					<div class="col-xl-12">
-
-						<!-- Statistics -->
-						<div class="card">
-                            <div class="card-header header-elements-inline">
-                                <h6 class="card-title">Statistics</h6>
-                            </div>
-                            <div class="card-body py-0">
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <a href="#" class="btn bg-transparent border-teal text-teal rounded-round border-2 btn-icon mr-3">
-                                                <i class="icon-plus3"></i>
-                                            </a>
-                                            <div>
-                                                <div class="font-weight-semibold">Chapter</div>
-                                                <span class="text-muted" id="stat-author">{{ $countChapters }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="w-75 mx-auto mb-3" id="new-visitors"></div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <a href="#" class="btn bg-transparent border-warning-400 text-warning-400 rounded-round border-2 btn-icon mr-3">
-                                                <i class="icon-watch2"></i>
-                                            </a>
-                                            <div>
-                                                <div class="font-weight-semibold">Comment</div>
-                                                <span class="text-muted" id="stat-publisher">{{ $comments }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="w-75 mx-auto mb-3" id="new-sessions"></div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="d-flex align-items-center justify-content-center mb-2">
-                                            <a href="#" class="btn bg-transparent border-indigo-400 text-indigo-400 rounded-round border-2 btn-icon mr-3">
-                                                <i class="icon-people"></i>
-                                            </a>
-                                            <div>
-                                                <div class="font-weight-semibold">Views</div>
-                                                <span class="text-muted" id="stat-book">{{ $views }}</span>
-                                            </div>
-                                        </div>
-                                        <div class="w-75 mx-auto mb-3" id="total-online"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						<!-- /statistics -->
-
-					</div>
-				</div>
-
 				<!-- Dashboard content -->
 				<div class="row">
 					<div class="col-xl-12">
@@ -147,9 +92,15 @@
 									<a href="{{ route('books.export.excel') }}" class="btn bg-indigo-300">
 										<i class="icon-statistics mr-2"></i> Export To Excel
 									</a>
-									<a href="{{ route('books.create') }}" class="btn bg-success-600">
-										<i class="icon-plus3 mr-2"></i> Create New Book
-									</a>
+									@if(auth()->check() && auth()->user()->role_id == 2)
+										<a href="{{ route('books.create') }}" class="btn bg-success-600">
+											<i class="icon-plus3 mr-2"></i> Create New Book
+										</a>
+										{{-- Jika ada tombol Create New Chapter, tambahkan di sini --}}
+										{{-- <a href="{{ route('chapters.create') }}" class="btn bg-primary-600">
+											<i class="icon-plus3 mr-2"></i> Create New Chapter
+										</a> --}}
+									@endif
 								</div>
 							</div>
 
@@ -176,7 +127,7 @@
 							    $('#books-table').DataTable({
 							        processing: true,
 							        serverSide: true,
-							        ajax: '{{ route("dashboard.booksData") }}',
+							        ajax: '{{ route("books.data") }}',
 							        columns: [
 							            {
 							                data: 'url_cover',

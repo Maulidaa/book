@@ -34,22 +34,26 @@
 						<div class="card-body">
 							<div class="media">
 								<div class="mr-3">
-									<a href="{{ route('profile') }}">
-										<img src="{{ $user->picture ? asset('storage/' . $user->picture) : asset('global_assets/images/placeholders/placeholder.jpg') }}"
+									<a href="{{ auth()->check() ? route('profile', auth()->user()->id) : '#' }}">
+										<img src="{{ auth()->check() && auth()->user()->picture ? asset('storage/' . auth()->user()->picture) : asset('global_assets/images/placeholders/placeholder.jpg') }}"
 											width="38" height="38" class="rounded-circle" alt="">
 									</a>
 								</div>
 
 								<div class="media-body">
-									<a href="{{ route('profile') }}" class="media-title font-weight-semibold text-dark">{{ $user->name ?? '-' }}</a>
+									<a href="{{ auth()->check() ? route('profile', auth()->user()->id) : '#' }}" class="media-title font-weight-semibold text-dark">
+										{{ auth()->check() ? auth()->user()->name : 'Guest' }}
+									</a>
 									<div class="font-size-xs opacity-50">
 										<i class="icon-pin font-size-sm"></i>
-										&nbsp;{{ $user->email ?? '-' }}
+										&nbsp;{{ auth()->check() ? auth()->user()->email : '-' }}
 									</div>
 								</div>
 
 								<div class="ml-3 align-self-center">
-									<a href="{{ route('profile') }}" class="text-white"><i class="icon-cog3"></i></a>
+									@if(auth()->check())
+										<a href="{{ route('profile', auth()->user()->id) }}" class="text-white"><i class="icon-cog3"></i></a>
+									@endif
 								</div>
 							</div>
 						</div>
@@ -64,7 +68,7 @@
 							<!-- Main -->
 							<li class="nav-item-header mt-0"><div class="text-uppercase font-size-xs line-height-xs">Main</div> <i class="icon-menu" title="Main"></i></li>
 							<li class="nav-item">
-								<a href="dashboard" class="nav-link active">
+								<a href="{{ route('dashboard') }}" class="nav-link active">
 									<i class="icon-home4"></i>
 									<span>
 										Dashboard

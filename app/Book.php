@@ -25,8 +25,8 @@ class Book extends Model
         return $this->belongsTo(User::class, 'author_id');
     }
 
-    public function read()
+    public function reads()
     {
-        return $this->hasMany(Read::class);
+        return $this->hasMany(Read::class, 'book_id');
     }
 }

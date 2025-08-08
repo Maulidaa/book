@@ -20,6 +20,7 @@ class RegisterController extends Controller
             'password' => 'required|string|min:6|confirmed',
         ]);
 
+
         // Create the user
         $user = User::create([
             'name' => $request->name,
@@ -43,6 +44,8 @@ class RegisterController extends Controller
             'message' => 'Registration successful. Silakan cek email untuk verifikasi.',
             'status' => 'success',
         ]);
+
+        return redirect()->route('login')->with('success', 'Registrasi berhasil!');
     }
 
     public function verification(Request $request)
@@ -68,3 +71,4 @@ class RegisterController extends Controller
         return view('auth.register');
     }
 }
+

@@ -147,9 +147,11 @@
                                     <a href="{{ route('chapters.download_all', ['id' => $bookId]) }}" class="btn bg-indigo-300">
                                         <i class="icon-statistics mr-2"></i> Export All Chapters
                                     </a>
-									<a href="{{ route('chapters.create', ['id' => $bookId]) }}" class="btn bg-success-600">
-                                        <i class="icon-plus3 mr-2"></i> Create New Chapters
-                                    </a>
+                                    @if(auth()->check() && auth()->user()->role_id == 2)
+                                        <a href="{{ route('chapters.create', ['id' => $bookId]) }}" class="btn bg-success-600">
+                                            <i class="icon-plus3 mr-2"></i> Create New Chapters
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
 

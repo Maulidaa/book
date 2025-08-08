@@ -225,15 +225,30 @@
 
 				<li class="nav-item dropdown dropdown-user">
 					<a href="#" class="navbar-nav-link d-flex align-items-center dropdown-toggle" data-toggle="dropdown">
-						<img src="{{ $user->picture ? asset('storage/' . $user->picture) : asset('global_assets/images/placeholders/placeholder.jpg') }}"
-											width="38" height="38" class="rounded-circle" alt="">
-						<span>{{ auth()->user()->name }}</span>	
+						@if(auth()->check())
+							<img src="{{ auth()->user()->picture ? asset('storage/' . auth()->user()->picture) : asset('global_assets/images/placeholders/placeholder.jpg') }}"
+								width="38" height="38" class="rounded-circle" alt="">
+							<span>{{ auth()->user()->name }}</span>
+						@else
+							<img src="{{ asset('global_assets/images/placeholders/placeholder.jpg') }}"
+								width="38" height="38" class="rounded-circle" alt="">
+							<span>Guest</span>
+						@endif
 					</a>
 					
 					<div class="dropdown-menu dropdown-menu-right">
-						<a href="{{ route('profile', $user->id) }}" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
-						<div class="dropdown-divider"></div>
-						<a href="{{ route('logout') }}" class="dropdown-item"><i class="icon-switch2"></i> Logout</a>
+						@if(auth()->check())
+							<a href="{{ route('profile', auth()->user()->id) }}" class="dropdown-item"><i class="icon-user-plus"></i> My profile</a>
+							<div class="dropdown-divider"></div>
+							<form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+								@csrf
+							</form>
+							<a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+								<i class="icon-switch2"></i> Logout
+							</a>
+						@else
+							<a href="{{ route('login') }}" class="dropdown-item"><i class="icon-user-plus"></i> Login</a>
+						@endif
 					</div>
 				</li>
 			</ul>

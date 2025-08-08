@@ -31,17 +31,29 @@ class DashboardController extends Controller
 
     public function booksData(Request $request)
     {
-        $role = $request->user()->role_id;
-        if($role==1){
+        $user = $request->user();
+        $role = $user ? $user->role_id : 0;
+
+        if($role == 1){
             $query = Book::with(['category', 'author'])->withCount('chapters');
         }
         else{
-            $query = Book::with(['category', 'author'])->withCount('chapters')->where('chapters->status', 'published');
+            $query = Book::with(['category', 'author'])
+                ->withCount(['chapters' => function($q) {
+                    $q->where('status', 'published');
+                }])
+                ->whereHas('chapters', function($q) {
+                    $q->where('status', 'published');
+                });
         }
         return DataTables::of($query)
             ->addColumn('action', function ($book) {
                 return view('book.partials.actions', compact('book'))->render();
             })
             ->make(true);
+    }
+    public function redirectToDashboard()
+    {
+        return redirect()->route('dashboard');
     }
 }
