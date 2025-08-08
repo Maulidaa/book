@@ -43,6 +43,13 @@
 	<script src="../../../../global_assets/js/demo_charts/pages/dashboard/light/bullets.js"></script>
 	<!-- /theme JS files -->
 
+	<!-- DataTables CSS -->
+	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
+
+	<!-- DataTables JS -->
+	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+
 </head>
 
 <body>
@@ -166,70 +173,51 @@
 								</div>
 							</div>
 
-							<div class="table-responsive">
-								<table class="table text-nowrap">
-									<thead>
-										<tr>
-											<th>Title</th>
-											<th>Publish Date</th>
-											<th>Author</th>
-											<th>Status</th>
-											<th class="text-center" style="width: 20px;"><i class="icon-arrow-down12"></i></th>
-										</tr>
-									</thead>
-									<tbody>
-										@foreach($listChapters as $chapter)
-										<tr>
-											<td>
-												<div class="d-flex align-items-center">
-													<div class="mr-3">
-														<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" @method('PUT')>
-															<img src="{{ $chapter->book && $chapter->chapter_cover ? asset('storage/' . $chapter->chapter_cover) : asset('storage/covers/book.jpg') }}"
-																 class="rounded-circle" width="32" height="32" alt="">
-														</a>
-													</div>
-													<div>
-														<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}">{{ $chapter->title }}</a>
-														<div class="text-muted font-size-sm">
-															<span class="badge badge-mark border-blue mr-1"></span>
-															{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}
-														</div>
-													</div>
-												</div>
-											</td>
-											<!-- <td>
-												<span class="badge badge-success">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span> -->
-											<td>
-												<span class="text-muted">{{ $chapter->created_at ? $chapter->created_at->format('d M Y') : '-' }}</span>
-											<td><span class="text-muted">{{ $chapter->book->author->name ?? '-' }}</span></td>
-											<td><span class="badge bg-blue">{{ $chapter->status ?? '-' }}</span></td>	
-											<td class="text-center">
-												<div class="list-icons">
-													<div class="dropdown">
-														<a href="#" class="list-icons-item dropdown-toggle caret-0" data-toggle="dropdown"><i class="icon-menu7"></i></a>
-														<div class="dropdown-menu dropdown-menu-right">
-															<a href="{{ route('chapters.download_pdf', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item">
-																<i class="icon-file-stats"></i> Download
-															</a>
-															<a href="{{ route('chapters.edit', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" class="dropdown-item">
-																<i class="icon-file-text2"></i> Edit
-															</a>
-															<form action="{{ route('chapters.destroy', ['id' => $chapter->book_id, 'chapterId' => $chapter->id]) }}" method="POST" style="display:inline;">
-																@csrf
-																@method('DELETE')
-																<button type="submit" class="dropdown-item" style="background:none; border:none; width:100%; text-align:left;">
-																	<i class="icon-file-locked"></i> Delete
-																</button>
-															</form>
-														</div>
-													</div>
-												</div>
-											</td>
-										</tr>
-										@endforeach
-									</tbody>
-								</table>
+							<!-- Tabel Chapter -->
+							<div class="card p-3" style="overflow-x:auto;">
+							    <table id="chapters-table" class="table table-hover text-center w-100">
+							        <thead>
+							            <tr>
+							                <th>Cover</th>
+							                <th>Title</th>
+							                <th>Author</th>
+							                <th>Status</th>
+							                <th>Created At</th>
+							                <th>Action</th>
+							            </tr>
+							        </thead>
+							    </table>
 							</div>
+
+							<!-- Script DataTables -->
+							<script>
+							$(function() {
+							    $('#chapters-table').DataTable({
+							        processing: true,
+							        serverSide: true,
+							        ajax: '{{ route("chapters.data", ["id" => $bookId]) }}',
+							        columns: [
+							            {
+							                data: 'chapter_cover',
+							                name: 'chapter_cover',
+							                orderable: false,
+							                searchable: false,
+							                render: function(data, type, row) {
+							                    if (data) {
+							                        return '<img src="/storage/' + data + '" style="max-width:40px;max-height:40px;object-fit:cover;border-radius:4px;">';
+							                    }
+							                    return '-';
+							                }
+							            },
+							            { data: 'title', name: 'title' },
+							            { data: 'book.author.name', name: 'book.author.name', defaultContent: '-' },
+							            { data: 'status', name: 'status', defaultContent: '-' },
+							            { data: 'created_at', name: 'created_at', defaultContent: '-' },
+							            { data: 'action', name: 'action', orderable: false, searchable: false }
+							        ]
+							    });
+							});
+							</script>
 						</div>
 						<!-- /marketing campaigns -->
 					</div>

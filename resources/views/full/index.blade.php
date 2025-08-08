@@ -162,19 +162,19 @@
 
 							<!-- Tabel -->
 							<div class="card p-3" style="overflow-x:auto;">
-							    <table id="books-table" class="table table-hover text-center w-100">
-							        <thead>
-							            <tr>
-							                <th>Cover</th>
-							                <th>Title</th>
-							                <th>Author</th>
-							                <th>ISBN</th>
-							                <th>Chapter</th>
-							                <th>Category</th>
-							                <th>Action</th>
-							            </tr>
-							        </thead>
-							    </table>
+								<table id="books-table" class="table table-hover text-center w-100">
+									<thead>
+										<tr>
+											<th>Cover</th>
+											<th>Title</th>
+											<th>Author</th>
+											<th>ISBN</th>
+											<th>Chapter</th>
+											<th>Category</th>
+											<th>Action</th>
+										</tr>
+									</thead>
+								</table>
 							</div>
 
 							<!-- Script DataTables -->

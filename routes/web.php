@@ -45,5 +45,8 @@ Route::prefix('books/{id}/chapters')->group(function () {
     Route::delete('/{chapterId}', [ChapterController::class, 'destroy'])->name('chapters.destroy');
     Route::get('/download_all_chapters', [ChapterController::class, 'download_all_chapters'])->name('chapters.download_all');
     Route::get('/{chapterId}/download-pdf', [ChapterController::class, 'download_pdf'])->name('chapters.download_pdf');
-
+    Route::get('/show', [ChapterController::class, 'show'])->name('chapters.show');
+    Route::get('/{chapterId}/show', [ChapterController::class, 'show'])->name('chapters.show');
+    Route::post('/{chapterId}/comments', [\App\Http\Controllers\Chapter\CommentController::class, 'store'])->name('chapters.comments.store');   
 });
+Route::get('/books/{id}/chapters/data', [ChapterController::class, 'chapterData'])->name('chapters.data');

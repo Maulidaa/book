@@ -6,6 +6,8 @@ use App\Book;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Chapter;
+use App\Read;
+use Yajra\DataTables\Facades\DataTables;
 
 class ChapterController extends Controller
 {
@@ -42,8 +44,30 @@ class ChapterController extends Controller
     
     public function show($bookId, $chapterId)
     {
-        // Logic to display a specific chapter of a book can be added here
-        return view('chapters.show', ['bookId' => $bookId, 'chapterId' => $chapterId]);
+        $user = auth()->user();
+        $chapter = Chapter::with('book')->findOrFail($chapterId);
+        $book = $chapter->book;
+        $bookTitle = $book ? $book->title : 'Unknown Book';
+        $comments = $chapter->comments;
+
+        $penulis = $book && $book->author ? $book->author->name : '-';
+
+        if($user != $penulis){
+            Read::create([
+                'user_id' => $user->id,
+                'chapter_id' => $chapterId,
+                'book_id' => $bookId // Tambahkan ini
+            ]);
+        }
+        
+        return view('chapters.show', [
+            'chapter' => $chapter,
+            'bookId' => $bookId,
+            'chapterId' => $chapterId,
+            'comments' => $comments,
+            'bookTitle' => $bookTitle,
+            'user' => $user
+        ]);
     }
 
     public function create($bookId)
@@ -164,5 +188,16 @@ class ChapterController extends Controller
             return redirect()->route('books.chapters', ['id' => $bookId])->with('success', 'Chapter deleted successfully');
         }
         return redirect()->back()->with('error', 'Chapter not found');
+    }
+
+    public function chapterData(Request $request, $bookId)
+    {
+        $query = Chapter::where('book_id', $bookId)->with(['book', 'comments', 'reader']);
+        return DataTables::of($query)
+            ->addColumn('action', function ($chapter) {
+                // Ganti ke partial yang sudah ada
+                return view('chapter.partials.actions', compact('chapter'))->render();
+            })
+            ->make(true);
     }
 }
