@@ -27,6 +27,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            'role_id' => 3
         ]);
 
         // Generate token verifikasi

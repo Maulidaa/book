@@ -67,4 +67,9 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function requestUpdateRoles()
+    {
+        return $this->hasMany(RequestUpdateRole::class);
+    }
 }

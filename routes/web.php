@@ -9,7 +9,7 @@ use App\Http\Controllers\AuthNew\ProfileController;
 use App\Http\Controllers\Chapter\ChapterController;
 use App\Http\Controllers\AuthNew\LogoutController;
 use App\Http\Controllers\Chapter\CommentController;
-
+use App\Http\Controllers\Role\UpdateRoleController;
 
 // Auth routes
 Route::prefix('auth')->group(function () {
@@ -59,3 +59,9 @@ Route::prefix('books')->group(function () {
 
 // Redirect from root to dashboard
 Route::get('/', [DashboardController::class, 'redirectToDashboard'])->name('home');
+
+Route::prefix('role')->group(function () {
+    Route::get('/', [UpdateRoleController::class, 'index'])->name('role.index');
+    Route::put('/update/{id}', [UpdateRoleController::class, 'update'])->name('role.update');
+    Route::get('data', [UpdateRoleController::class, 'getData'])->name('role.data');
+});
