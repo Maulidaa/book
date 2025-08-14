@@ -19,29 +19,6 @@
 				<a href="#" class="header-elements-toggle text-default d-md-none"><i class="icon-more"></i></a>
 			</div>
 
-			<div class="header-elements d-none">
-				<div class="breadcrumb justify-content-center">
-					<a href="#" class="breadcrumb-elements-item">
-						<i class="icon-comment-discussion mr-2"></i>
-						Support
-					</a>
-
-					<div class="breadcrumb-elements-item dropdown p-0">
-						<a href="#" class="breadcrumb-elements-item dropdown-toggle" data-toggle="dropdown">
-							<i class="icon-gear mr-2"></i>
-							Settings
-						</a>
-
-						<div class="dropdown-menu dropdown-menu-right">
-							<a href="#" class="dropdown-item"><i class="icon-user-lock"></i> Account security</a>
-							<a href="#" class="dropdown-item"><i class="icon-statistics"></i> Analytics</a>
-							<a href="#" class="dropdown-item"><i class="icon-accessibility"></i> Accessibility</a>
-							<div class="dropdown-divider"></div>
-							<a href="#" class="dropdown-item"><i class="icon-gear"></i> All settings</a>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 
 		<div class="page-header-content header-elements-md-inline">
