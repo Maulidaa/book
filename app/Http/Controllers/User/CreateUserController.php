@@ -19,6 +19,7 @@ class CreateUserController extends Controller
             ['title' => 'Create User', 'url' => route('user.create')],
         ];
         
+        
         $roles = Role::all(); 
         return view('user.create', compact('roles', 'breadcrumb'));
     }
