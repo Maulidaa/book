@@ -4,12 +4,25 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\RequestUpdateRole;
+use App\User;
 use Illuminate\Http\Request;
 use Symfony\Component\VarDumper\Cloner\Data;
 use Yajra\DataTables\DataTables;
+use App\Role;
 
 class UpdateRoleController extends Controller
 {
+    public function create()
+    {
+        $breadcrumb = [
+                ['title' => 'Dashboard', 'url' => route('dashboard')],
+                ['title' => 'Profile', 'url' => route('profile')],
+                ['title' => 'Request Role Change', 'url' => route('profile.index')],
+            ];
+        $roles = Role::all();
+        return view('auth.request_role', compact('roles', 'breadcrumb'));
+    }
+
     public function store(Request $request)
     {
         // Validate the request
@@ -19,13 +32,23 @@ class UpdateRoleController extends Controller
 
         $user = auth()->user();
 
-        // Find the request update role by ID
-        $requestUpdateRole = RequestUpdateRole::create([
+        // Cek apakah sudah ada request yang belum selesai
+        $existing = \App\RequestUpdateRole::where('user_id', $user->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existing) {
+            return redirect()->back()->with('success', 'You have requested a role change. Please wait for the administrator’s approval.');
+        }
+
+        // Buat request baru
+        RequestUpdateRole::create([
             'user_id' => $user->id,
             'role_id' => $request->role_id,
             'status' => 'pending',
         ]);
 
+        return redirect()->back()->with('success', 'Role change request has been submitted. Please wait for admin approval.');
     }
 
     public function index()
@@ -34,7 +57,7 @@ class UpdateRoleController extends Controller
             ['title' => 'Dashboard', 'url' => route('dashboard')],
             ['title' => 'User Management', 'url' => route('role.index')],
         ];
-        return view('user.index', compact('breadcrumb'));
+        return view('user.role', compact('breadcrumb'));
     }
 
     public function getData()
@@ -43,7 +66,7 @@ class UpdateRoleController extends Controller
 
         return DataTables::of($requests)
             ->addColumn('action', function ($requestUpdateRole) {
-                return view('user.partials.actions', compact('requestUpdateRole'))->render();
+                return view('user.partials.actions-role', compact('requestUpdateRole'))->render();
             })
             ->make(true);
     }
@@ -64,6 +87,12 @@ class UpdateRoleController extends Controller
         $requestUpdateRole->update([
             'status' => $request->status,
         ]);
+
+        $user_id = $requestUpdateRole->user_id;
+
+        $user = User::findOrFail($user_id);
+        $user->role_id = $request->status == 'approved' ? $requestUpdateRole->role_id : 2;
+        $user->save();
 
         return redirect()->back()->with('success', 'Role update request has been ' . $request->status);
         }        

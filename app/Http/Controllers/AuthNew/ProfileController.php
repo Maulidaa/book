@@ -20,6 +20,7 @@ class ProfileController extends Controller
      */
     public function show()
     {
+        $roles = \App\Role::all();
         $breadcrumb = [
                 ['title' => 'Dashboard', 'url' => route('dashboard')],
                 ['title' => 'Profile', 'url' => route('profile.update')],
@@ -28,7 +29,7 @@ class ProfileController extends Controller
         if (!$user) {
             return redirect()->route('login')->with('error', 'You must be logged in.');
         }
-        return view('auth.update', compact('user', 'breadcrumb'));
+        return view('auth.update', compact('user', 'breadcrumb', 'roles'));
     }
 
     /**
@@ -43,7 +44,6 @@ class ProfileController extends Controller
             'name' => 'nullable|string|max:255',
             'email' => 'nullable|email|max:255|unique:users,email,' . auth()->id(),
             'picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'role_id' => 'nullable|exists:roles,id',
             'password' => 'nullable|string|min:6|confirmed',
         ]);
         $user = auth()->user();

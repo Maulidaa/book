@@ -55,9 +55,6 @@
 									<a href="{{ route('user.import_excel') }}" class="btn bg-warning">
 										<i class="icon-plus3 mr-2"></i> Import Excel
 									</a>
-									<a href="{{ route('role.index') }}" class="btn bg-success-600">
-										<i class="icon-plus3 mr-2"></i> Request Role Update
-									</a>
 								</div>
 							</div>
 
@@ -68,7 +65,8 @@
 							            <tr>
 							                <th>Nama</th>
 											<th>Email</th>
-							                <th>Role</th>
+							                <th>Request Role</th>
+							                <th>Status</th>
 							                <th>Action</th>
 							            </tr>
 							        </thead>
@@ -81,11 +79,12 @@
 							    $('#roles-table').DataTable({
 							        processing: true,
 							        serverSide: true,
-							        ajax: '{{ route("user.data") }}',
+							        ajax: '{{ route("role.data") }}',
 							        columns: [
-							            { data: 'name', name: 'name' },
-							            { data: 'email', name: 'email' },
+							            { data: 'user.name', name: 'user.name' },
+							            { data: 'user.email', name: 'user.email' },
 							            { data: 'role.name', name: 'role.name' },
+							            { data: 'status', name: 'status' },
 							            { data: 'action', name: 'action', orderable: false, searchable: false }
 							        ]
 							    });

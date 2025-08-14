@@ -8,6 +8,7 @@ use App\User;
 use App\Role;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
+use Yajra\DataTables\DataTables;
 
 class CreateUserController extends Controller
 {
@@ -89,5 +90,56 @@ class CreateUserController extends Controller
             ['title' => 'Import User', 'url' => route('user.import_excel')],
         ];
         return view('user.import', compact('breadcrumb'));
+    }
+
+    public function index()
+    {
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'User Management', 'url' => route('role.index')],
+        ];
+        return view('user.index', compact('breadcrumb'));
+    }
+
+    public function getData()
+    {
+        $users = User::with('role')->get();
+
+        return DataTables::of($users)
+            ->addColumn('action', function ($user) {
+                return view('user.partials.actions', compact('user'))->render();
+            })
+            ->make(true);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        // Validate the request
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'role_id' => 'required|integer|exists:roles,id',
+        ]);
+
+        // Update user data
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->role_id = $request->input('role_id');
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+        $user->save();
+
+        return redirect()->route('user.index')->with('success', 'User updated successfully.');
+    }
+
+    public function destroy($id)
+    {
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('user.index')->with('success', 'User deleted successfully.');
     }
 }

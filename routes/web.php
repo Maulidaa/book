@@ -61,6 +61,13 @@ Route::prefix('books')->group(function () {
 // Redirect from root to dashboard
 Route::get('/', [DashboardController::class, 'redirectToDashboard'])->name('home');
 
+Route::prefix('profile')->group(function () {
+    Route::prefix('role')->group(function () {
+        Route::get('/', [UpdateRoleController::class, 'create'])->name('profile.index');
+        Route::post('/update', [UpdateRoleController::class, 'store'])->name('role.request');
+    });
+});
+
 Route::prefix('role')->middleware('role:1')->group(function () {
     Route::get('/', [UpdateRoleController::class, 'index'])->name('role.index');
     Route::put('/update/{id}', [UpdateRoleController::class, 'update'])->name('role.update');
@@ -72,4 +79,9 @@ Route::prefix('user')->middleware('role:1')->group(function () {
     Route::post('/store', [CreateUserController::class, 'store'])->name('user.store');
     Route::post('/import', [CreateUserController::class, 'import'])->name('user.import');
     Route::get('/import-excel', [CreateUserController::class, 'import_excel'])->name('user.import_excel');
+    Route::get('/', [CreateUserController::class, 'index'])->name('user.index');
+    Route::get('/data', [CreateUserController::class, 'getData'])->name('user.data');
+    Route::get('/{id}/edit', [CreateUserController::class, 'edit'])->name('user.edit');
+    Route::put('/{id}', [CreateUserController::class, 'update'])->name('user.update');
+    Route::delete('/{id}', [CreateUserController::class, 'destroy'])->name('user.destroy');
 });
