@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-	<title>User Management</title>
+	<title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
 
 	<!-- Global stylesheets -->
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
@@ -43,11 +43,11 @@
 	<script src="../../../../global_assets/js/demo_charts/pages/dashboard/light/bullets.js"></script>
 	<!-- /theme JS files -->
 
-	<!-- DataTables CSS -->
-	<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/jquery.dataTables.min.css">
-
-	<!-- DataTables JS -->
-	<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+	<!-- Select2 CSS -->
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<link href="https://cdn.jsdelivr.net/npm/@ttskch/select2-bootstrap4-theme@1.6.2/dist/select2-bootstrap4.min.css" rel="stylesheet" />
+	<!-- Select2 JS -->
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 
 <body>
@@ -56,12 +56,10 @@
 	@include('main.navbar')
 	<!-- /main navbar -->
 
-
 	<!-- Page header -->
 	@include('main.header')
 	<!-- /page header -->
 		
-
 	<!-- Page content -->
 	<div class="page-content pt-0">
 
@@ -77,70 +75,45 @@
 
 				<!-- Dashboard content -->
 				<div class="row">
-					<div class="col-xl-12">
-
-						<!-- Marketing campaigns -->
+					<div class="col-md-12">
 						<div class="card">
-							<div class="card-header header-elements-sm-inline">
-								<h6 class="card-title">Books</h6>
-								<div class="header-elements">
-			                	</div>
-							</div>
+							<div class="card-header header-elements-inline">
+                                <h5 class="card-title">Import Users</h5>
+                                <div class="header-elements">
+                                    <div class="list-icons">
+                                        <a class="list-icons-item" data-action="collapse"></a>
+                                        <a class="list-icons-item" data-action="reload"></a>
+                                        <a class="list-icons-item" data-action="remove"></a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                @if(session('success'))
+                                    <div class="alert alert-success">
+                                        {{ session('success') }}
+                                    </div>
+                                @endif
 
-							<div class="card-body d-sm-flex align-items-sm-center justify-content-sm-between flex-sm-wrap">
-								<div>
-									<a href="{{ route('books.export.excel') }}" class="btn bg-indigo-300">
-										<i class="icon-statistics mr-2"></i> Create New User
-									</a>
-									@if(auth()->check() && auth()->user()->role_id == 2)
-										<a href="{{ route('books.create') }}" class="btn bg-success-600">
-											<i class="icon-plus3 mr-2"></i> Create New Book
-										</a>
-										{{-- Jika ada tombol Create New Chapter, tambahkan di sini --}}
-										{{-- <a href="{{ route('chapters.create') }}" class="btn bg-primary-600">
-											<i class="icon-plus3 mr-2"></i> Create New Chapter
-										</a> --}}
-									@endif
-								</div>
-							</div>
+                                @if ($errors->any())
+                                    <div class="alert alert-danger">
+                                        <ul class="mb-0">
+                                            @foreach ($errors->all() as $error)
+                                                <li>{{ $error }}</li>
+                                            @endforeach
+                                        </ul>
+                                    </div>
+                                @endif
 
-							<!-- Tabel -->
-							<div class="card p-3" style="overflow-x:auto;">
-							    <table id="roles-table" class="table table-hover text-center w-100">
-							        <thead>
-							            <tr>
-							                <th>Nama</th>
-							                <th>Request Role</th>
-							                <th>Status</th>
-							                <th>Action</th>
-							            </tr>
-							        </thead>
-							    </table>
-							</div>
-
-							<!-- Script DataTables -->
-							<script>
-							$(function() {
-							    $('#roles-table').DataTable({
-							        processing: true,
-							        serverSide: true,
-							        ajax: '{{ route("role.data") }}',
-							        columns: [
-							            { data: 'user.name', name: 'user.name' },
-							            { data: 'role.name', name: 'role.name' },
-							            { data: 'status', name: 'status' },
-							            { data: 'action', name: 'action', orderable: false, searchable: false }
-							        ]
-							    });
-							});
-							</script>
+                                <form action="{{ route('user.import') }}" method="POST" enctype="multipart/form-data" class="mb-3">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label>Import Users (Excel .xlsx)</label>
+                                        <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-success">Import Excel</button>
+                                </form>
+                            </div>
 						</div>
-						<!-- /marketing campaigns -->
-					</div>
-
-					<div class="col-xl-4">
-
-
 					</div>
 				</div>
 				<!-- /dashboard content -->
@@ -155,8 +128,8 @@
 	<!-- /page content -->
 	 
 	
-	<!-- Footer -->
-	@include('main.footer')
+	
 	<!-- /footer -->
+     @include('main.footer')
 </body>
 </html>

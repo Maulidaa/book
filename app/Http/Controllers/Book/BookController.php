@@ -249,4 +249,5 @@ class BookController extends Controller
             return response()->json(['error' => 'Failed to update book'], 500);
         }
     }
+
 }

@@ -41,13 +41,7 @@ class RegisterController extends Controller
         // Kirim email verifikasi
         Mail::to($user->email)->send(new VerificatioMail($verificationUrl));
 
-        return response()->json([
-            'user' => $user,
-            'message' => 'Registration successful. Silakan cek email untuk verifikasi.',
-            'status' => 'success',
-        ]);
-
-        return redirect()->route('login')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('login')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 
     public function verification(Request $request)
@@ -64,7 +58,10 @@ class RegisterController extends Controller
         $user->email_verification_token = null;
         $user->save();
 
-        return response()->json(['message' => 'Email berhasil diverifikasi']);
+        return view('auth.verification', [
+            'message' => 'Email berhasil diverifikasi. Silakan login.',
+            'status' => 'success',
+        ]);
     }
 
     public function index()

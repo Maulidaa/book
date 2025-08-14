@@ -2,14 +2,15 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Dashboard\DashboardController;
-use App\Http\Controllers\Book\BookController;
 use App\Http\Controllers\AuthNew\LoginController;
 use App\Http\Controllers\AuthNew\RegisterController;
 use App\Http\Controllers\AuthNew\ProfileController;
 use App\Http\Controllers\Chapter\ChapterController;
 use App\Http\Controllers\AuthNew\LogoutController;
 use App\Http\Controllers\Chapter\CommentController;
-use App\Http\Controllers\Role\UpdateRoleController;
+use App\Http\Controllers\User\UpdateRoleController;
+use App\Http\Controllers\User\CreateUserController;
+use App\Http\Controllers\Book\BookController;
 
 // Auth routes
 Route::prefix('auth')->group(function () {
@@ -30,22 +31,22 @@ Route::get('/dashboard/books-data', [DashboardController::class, 'booksData'])->
 Route::prefix('books')->group(function () {
     Route::get('data', [BookController::class, 'yourBook'])->name('books.data');
     Route::get('/', [BookController::class, 'index'])->name('books.index');
-    Route::get('/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
-    Route::put('/{id}', [BookController::class, 'update'])->name('books.update');
-    Route::delete('/{id}', [BookController::class, 'destroy'])->name('books.destroy');
-    Route::get('/create', [BookController::class, 'create'])->name('books.create');
-    Route::post('/', [BookController::class, 'store'])->name('books.store');
+    Route::middleware('role:1,2')->get('/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
+    Route::middleware('role:1,2')->put('/{id}', [BookController::class, 'update'])->name('books.update');
+    Route::middleware('role:1,2')->delete('/{id}', [BookController::class, 'destroy'])->name('books.destroy');
+    Route::middleware('role:1,2')->get('/create', [BookController::class, 'create'])->name('books.create');
+    Route::middleware('role:1,2')->post('/', [BookController::class, 'store'])->name('books.store');
     Route::get('/{id}', [BookController::class, 'show'])->name('books.show');
-    Route::get('/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
+    Route::middleware('role:1,2')->get('/{id}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::get('/export/excel', [BookController::class, 'download_excel'])->name('books.export.excel');
     Route::prefix('{id}/chapters')->group(function () {
         Route::get('/', [ChapterController::class, 'index'])->name('books.chapters');
-        Route::get('/create', [ChapterController::class, 'create'])->name('chapters.create');
-        Route::post('/', [ChapterController::class, 'store'])->name('chapters.store');
+        Route::middleware('role:1,2')->get('/create', [ChapterController::class, 'create'])->name('chapters.create');
+        Route::middleware('role:1,2')->post('/', [ChapterController::class, 'store'])->name('chapters.store');
         Route::prefix('/{chapterId}')->group(function () {
-            Route::get('/edit', [ChapterController::class, 'edit'])->name('chapters.edit');
-            Route::put('/', [ChapterController::class, 'update'])->name('chapters.update');
-            Route::delete('/', [ChapterController::class, 'destroy'])->name('chapters.destroy');
+            Route::middleware('role:1,2')->get('/edit', [ChapterController::class, 'edit'])->name('chapters.edit');
+            Route::middleware('role:1,2')->put('/', [ChapterController::class, 'update'])->name('chapters.update');
+            Route::middleware('role:1,2')->delete('/', [ChapterController::class, 'destroy'])->name('chapters.destroy');
             Route::get('/download-pdf', [ChapterController::class, 'download_pdf'])->name('chapters.download_pdf');
             Route::get('/show', [ChapterController::class, 'show'])->name('chapters.show');
             Route::post('/comments', [CommentController::class, 'store'])->name('chapters.comments.store'); 
@@ -60,8 +61,15 @@ Route::prefix('books')->group(function () {
 // Redirect from root to dashboard
 Route::get('/', [DashboardController::class, 'redirectToDashboard'])->name('home');
 
-Route::prefix('role')->group(function () {
+Route::prefix('role')->middleware('role:1')->group(function () {
     Route::get('/', [UpdateRoleController::class, 'index'])->name('role.index');
     Route::put('/update/{id}', [UpdateRoleController::class, 'update'])->name('role.update');
     Route::get('data', [UpdateRoleController::class, 'getData'])->name('role.data');
+});
+
+Route::prefix('user')->middleware('role:1')->group(function () {
+    Route::get('/create', [CreateUserController::class, 'create'])->name('user.create');
+    Route::post('/store', [CreateUserController::class, 'store'])->name('user.store');
+    Route::post('/import', [CreateUserController::class, 'import'])->name('user.import');
+    Route::get('/import-excel', [CreateUserController::class, 'import_excel'])->name('user.import_excel');
 });

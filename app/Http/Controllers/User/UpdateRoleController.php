@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Role;
+namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\RequestUpdateRole;
@@ -30,7 +30,7 @@ class UpdateRoleController extends Controller
 
     public function index()
     {
-        return view('role.update');
+        return view('user.index');
     }
 
     public function getData()
@@ -39,7 +39,7 @@ class UpdateRoleController extends Controller
 
         return DataTables::of($requests)
             ->addColumn('action', function ($requestUpdateRole) {
-                return view('role.partials.actions', compact('requestUpdateRole'))->render();
+                return view('user.partials.actions', compact('requestUpdateRole'))->render();
             })
             ->make(true);
     }
@@ -62,8 +62,6 @@ class UpdateRoleController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Role update request has been ' . $request->status);
-        }
-
-        
+        }        
     }
 }
