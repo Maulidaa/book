@@ -6,15 +6,7 @@
     <title>Login - Book App</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Global stylesheets -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet">
-    <link href="{{ asset('global_assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/bootstrap_limitless.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/layout.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet">
-    <!-- /global stylesheets -->
+    @include('main.stylesheets')
 </head>
 <body>
 
@@ -27,6 +19,11 @@
                 </div>
                 @if(session('error'))
                     <div class="alert alert-danger">{{ session('error') }}</div>
+                @endif
+                @if(session('success'))
+                    <div class="alert alert-success">
+                        {{ session('success') }}
+                    </div>
                 @endif
                 <form method="POST" action="{{ route('login') }}">
                     @csrf
