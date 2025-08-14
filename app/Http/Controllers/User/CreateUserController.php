@@ -142,4 +142,11 @@ class CreateUserController extends Controller
 
         return redirect()->route('user.index')->with('success', 'User deleted successfully.');
     }
+    
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        return view('user.edit', compact('user', 'roles'));
+    }
 }

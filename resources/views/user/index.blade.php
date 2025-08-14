@@ -48,15 +48,14 @@
 
 							<div class="card-body d-sm-flex align-items-sm-center justify-content-sm-between flex-sm-wrap">
 								<div>
-									<a href="{{ route('user.create') }}" class="btn bg-success-600">
-										<i class="icon-plus3 mr-2"></i> Create New User
+									<a href="{{ route('user.create') }}" class="btn btn-success mr-2 mb-2">
+										<i class="icon-plus3 mr-1"></i> Create New User
 									</a>
-
-									<a href="{{ route('user.import_excel') }}" class="btn bg-warning">
-										<i class="icon-plus3 mr-2"></i> Import Excel
+									<a href="{{ route('user.import_excel') }}" class="btn btn-warning mr-2 mb-2">
+										<i class="icon-file-excel mr-1"></i> Import Excel
 									</a>
-									<a href="{{ route('role.index') }}" class="btn bg-success-600">
-										<i class="icon-plus3 mr-2"></i> Request Role Update
+									<a href="{{ route('role.index') }}" class="btn btn-info mb-2">
+										<i class="icon-user-check mr-1"></i> Request Role Update
 									</a>
 								</div>
 							</div>

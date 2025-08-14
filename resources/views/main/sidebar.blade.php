@@ -83,7 +83,7 @@
 
 							@if(auth()->check() && auth()->user()->role_id == 1)
 							<li class="nav-item nav-item-menu">
-								<a href="{{ route('role.index') }}" class="nav-link"><i class="icon-color-sampler"></i> <span>User Management</span></a>
+								<a href="{{ route('user.index') }}" class="nav-link"><i class="icon-color-sampler"></i> <span>User Management</span></a>
 							</li>
 							@endif
 						</ul>
