@@ -30,7 +30,11 @@ class UpdateRoleController extends Controller
 
     public function index()
     {
-        return view('user.index');
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'User Management', 'url' => route('role.index')],
+        ];
+        return view('user.index', compact('breadcrumb'));
     }
 
     public function getData()

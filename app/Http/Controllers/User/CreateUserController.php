@@ -13,8 +13,14 @@ class CreateUserController extends Controller
 {
     public function create()
     {
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'User Management', 'url' => route('role.index')],
+            ['title' => 'Create User', 'url' => route('user.create')],
+        ];
+        
         $roles = Role::all(); 
-        return view('user.create', compact('roles'));
+        return view('user.create', compact('roles', 'breadcrumb'));
     }
 
     public function store(Request $request)
@@ -76,6 +82,11 @@ class CreateUserController extends Controller
 
     public function import_excel()
     {
-        return view('user.import');
+        $breadcrumb = [
+            ['title' => 'Dashboard', 'url' => route('dashboard')],
+            ['title' => 'User Management', 'url' => route('role.index')],
+            ['title' => 'Import User', 'url' => route('user.import_excel')],
+        ];
+        return view('user.import', compact('breadcrumb'));
     }
 }
