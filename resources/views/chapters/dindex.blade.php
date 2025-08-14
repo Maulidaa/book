@@ -4,27 +4,9 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Limitless - Responsive Web Application Kit by Eugene Kopyov</title>
+    <title>List of Chapters</title>
 
-    <!-- Global stylesheets -->
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,100,500,700,900" rel="stylesheet" type="text/css">
-    <link href="{{ asset('global_assets/css/icons/icomoon/styles.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/bootstrap_limitless.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/layout.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/components.min.css') }}" rel="stylesheet" type="text/css">
-    <link href="{{ asset('assets/css/colors.min.css') }}" rel="stylesheet" type="text/css">
-    <!-- /global stylesheets -->
-
-    <!-- DataTables CSS -->
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap4.min.css">
-
-    <!-- Core JS files -->
-    <script src="{{ asset('global_assets/js/main/jquery.min.js') }}"></script>
-    <script src="{{ asset('global_assets/js/main/bootstrap.bundle.min.js') }}"></script>
-    <!-- DataTables JS -->
-    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap4.min.js"></script>
+    @include('main.stylesheets')
 </head>
 
 <body>
