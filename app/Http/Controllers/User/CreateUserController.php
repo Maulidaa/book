@@ -35,6 +35,9 @@ class CreateUserController extends Controller
             'role_id' => $request->input('role_id'),
         ]);
 
+        $user->email_verified_at = now();
+        $user->save();
+
         return redirect()->route('user.create')->with('success', 'User created successfully.');
     }
 
@@ -56,13 +59,15 @@ class CreateUserController extends Controller
             $row = array_combine($header, $row);
             if (!empty($row['email']) && !empty($row['name']) && !empty($row['password']) && !empty($row['role_id'])) {
                 // Cek email unik
-                if (!\App\User::where('email', $row['email'])->exists()) {
-                    \App\User::create([
+                if (!User::where('email', $row['email'])->exists()) {
+                    $user = User::create([
                         'name' => $row['name'],
                         'email' => $row['email'],
                         'password' => Hash::make($row['password']),
                         'role_id' => $row['role_id'],
                     ]);
+                    $user->email_verified_at = now();
+                    $user->save();
                 }
             }
         }
