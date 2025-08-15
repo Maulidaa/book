@@ -29,4 +29,9 @@ class Book extends Model
     {
         return $this->hasMany(Read::class, 'book_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'book_id');
+    }
 }

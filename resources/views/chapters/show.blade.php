@@ -45,6 +45,15 @@
 									{!! nl2br(e($chapter->content)) !!}
 								</div>
 								<h6 class="mb-3 text-center">End of Chapter</h6>
+								<div class="text-center my-3">
+									<form id="like-form" action="{{ route('chapters.likes.store', ['id' => $bookId, 'chapterId' => $chapter->id]) }}" method="POST" style="display:inline;">
+										@csrf
+										<button type="button" id="like-btn" class="btn btn-outline-primary">
+											<i class="icon-thumbs-up2"></i>
+											<span id="like-count">0</span> Like
+										</button>
+									</form>
+								</div>
 							</div>
 							<div class="card-body">
 <!-- Comments Section -->
@@ -119,6 +128,37 @@
 				this.style.height = 'auto';
 				this.style.height = (this.scrollHeight) + 'px';
 			});
+
+			// Ambil jumlah like saat load
+			fetchLikes();
+
+			// Like button click
+			$('#like-btn').on('click', function(e) {
+				e.preventDefault();
+				$.ajax({
+					url: "{{ route('chapters.likes.store', ['id' => $bookId, 'chapterId' => $chapter->id]) }}",
+					type: "POST",
+					data: {
+						_token: "{{ csrf_token() }}",
+						book_id: "{{ $bookId }}",
+						chapter_id: "{{ $chapter->id }}"
+					},
+					success: function(response) {
+						fetchLikes();
+					}
+				});
+			});
+
+			// Ambil jumlah like
+			function fetchLikes() {
+				$.get("{{ route('chapters.likes.show', ['id' => $bookId, 'chapterId' => $chapter->id]) }}", function(data) {
+					if (Array.isArray(data)) {
+						$('#like-count').text(data.length);
+					} else {
+						$('#like-count').text(0);
+					}
+				});
+			}
 		});
 	</script>
 </body>

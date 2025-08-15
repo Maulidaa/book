@@ -11,6 +11,7 @@ use App\Http\Controllers\Chapter\CommentController;
 use App\Http\Controllers\User\UpdateRoleController;
 use App\Http\Controllers\User\CreateUserController;
 use App\Http\Controllers\Book\BookController;
+use App\Http\Controllers\Book\LikeController;
 
 // Auth routes
 Route::prefix('auth')->group(function () {
@@ -51,6 +52,11 @@ Route::prefix('books')->group(function () {
             Route::get('/show', [ChapterController::class, 'show'])->name('chapters.show');
             Route::post('/comments', [CommentController::class, 'store'])->name('chapters.comments.store'); 
             Route::get('/show', [ChapterController::class, 'show'])->name('chapters.show');
+            Route::prefix('/likes')->group(function () {
+                Route::post('/', [LikeController::class, 'store'])->name('chapters.likes.store');
+                Route::delete('/{likeId}', [LikeController::class, 'destroy'])->name('chapters.likes.destroy');
+                Route::get('/', [LikeController::class, 'show'])->name('chapters.likes.show');
+            });
         });
         
         Route::get('/download_all_chapters', [ChapterController::class, 'download_all_chapters'])->name('chapters.download_all');

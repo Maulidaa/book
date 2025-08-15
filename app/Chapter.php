@@ -22,4 +22,9 @@ class Chapter extends Model
     {
         return $this->hasMany(Read::class, 'chapter_id');
     }
+
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'chapter_id');
+    }
 }
