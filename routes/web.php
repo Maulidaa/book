@@ -22,6 +22,7 @@ Route::prefix('auth')->group(function () {
     Route::get('/register', [RegisterController::class, 'index'])->name('register');
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile');
     Route::post('/logout', [LogoutController::class, 'logout'])->name('logout');
+    Route::get('/verification', [RegisterController::class, 'verification'])->name('verification');
 });
 
 // Route default /dashboard

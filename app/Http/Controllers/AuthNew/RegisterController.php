@@ -36,11 +36,12 @@ class RegisterController extends Controller
         $user->save();
 
         // Buat URL verifikasi
-        $verificationUrl = url('/api/auth/verification?token=' . $token . '&email=' . $user->email);
+        $verificationUrl = url('/auth/verification?token=' . $token . '&email=' . urlencode($user->email));
 
         // Kirim email verifikasi
         Mail::to($user->email)->send(new VerificatioMail($verificationUrl));
 
+        // Selalu redirect ke login dengan pesan sukses
         return redirect()->route('login')->with('success', 'Registration successful! Please check your email to verify your account.');
     }
 

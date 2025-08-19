@@ -2,9 +2,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Email Verification</title>
-    <link href="{{ asset('assets/css/bootstrap.min.css') }}" rel="stylesheet">
+    <meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<title>Email Verification</title>
+
+	<!-- Global stylesheets -->
+	 @include('main.stylesheets')
 </head>
 <body>
     <div class="container mt-5">
